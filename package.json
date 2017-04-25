@@ -1,0 +1,19 @@
+{
+  "name": "ZwiebelBot",
+  "version": "1.0.0",
+  "description": "Bot for twitch.tv/pokerzwiebel",
+  "main": "bot.js",
+  "scripts": {
+    "prestart": "git pull && npm install",
+    "start": "node bot.js",
+    "test": "not specified && exit 1"
+  },
+  "author": "Xéntis",
+  "license": "ISC",
+  "dependencies": {
+    "tmi.js": "^1.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
