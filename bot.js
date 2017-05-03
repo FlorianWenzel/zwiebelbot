@@ -151,7 +151,7 @@ client.on("chat", (channel, userstate, message, self) => {
   //COMMAND => ANSWER COMMANDS
   msg = message.split(" ")
   if(msg.length == 1 && commands.findOne({ command:msg[0].toLowerCase()})){
-    client.say(channel, commands.findOne({ command:msg[0]}).response)
+    client.say(channel, commands.findOne({ command:msg[0].toLowerCase()}).response)
   }
   db.saveDatabase();
 });
