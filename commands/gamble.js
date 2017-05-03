@@ -43,7 +43,7 @@ function randomCard() {
 }
 
 module.exports = {
-  gamble: function (client, users, channel, userstate, message, self) {
+  gamble: function (client, users, channel, userstate, message) {
     msg = message.split(" ")
     if(msg.length != 2 || msg[0] != "!gamble" || isNaN(msg[1]) || parseInt(msg[1])<0){
       client.say(channel, 'Benutz !gamble <Einsatz> um zu gamblen!')

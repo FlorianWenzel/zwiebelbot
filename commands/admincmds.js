@@ -10,7 +10,7 @@ module.exports = {
       response += parts[i] + ' '
     }
     commands.insert({
-      command: parts[1],
+      command: parts[1].toLowerCase(),
       response: response,
       createdby: userstate.username
     });
@@ -40,7 +40,7 @@ module.exports = {
       commands.remove(cmd);
       client.say(channel, 'Command ' + parts[1] + ' entfernt.' )
   },
-  greet: function(client, greet, channel, userstate, message, self){
+  greet: function(client, greet, channel){
     if(greet){
       greet = false;
       client.say(channel, 'Begrüßung deaktiviert.')

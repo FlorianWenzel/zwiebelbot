@@ -32,14 +32,20 @@ var db = new loki('database.db',
         autosaveInterval: 1000
       });
 var users = null;
+var commands = null;
+var lottery = null;
 function loadHandler() {
     users = db.getCollection('users');
     commands = db.getCollection('commands');
+    lottery = db.getCollection('lottery')
     if (!users) {
         users = db.addCollection('users');
     }
     if (!commands) {
       commands = db.addCollection('commands');
+    }
+    if (!lottery) {
+      lottery = db.addCollection('lottery');
     }
 }
 
@@ -77,6 +83,8 @@ function interval() {
           console.log('...done')
         }
   })
+
+  db.saveDatabase();
 }
 client.connect();
 console.log('==================   ZWIEBELBOT START   ==================')
@@ -84,6 +92,7 @@ client.on("chat", (channel, userstate, message, self) => {
   if(self){
     return
   }
+  coincmds.knowUser(users, userstate.username)
   //ADMIN FUNCTIONS
 
   //ADDCMD
@@ -100,8 +109,12 @@ client.on("chat", (channel, userstate, message, self) => {
     return;
   //GREET
   }else if(message.includes('!greet') && userstate.mod){
-    greet = admincmds.greet(client, greet, channel, userstate, message, self);
+    greet = admincmds.greet(client, greet, channel);
     return;
+  }else if(message.includes('!startLottery') && userstate.mod){
+    coincmds.startLottery(client, lottery, channel);
+  }else if(message.includes('!endLottery') && userstate.mod){
+    coincmds.endLottery(client, lottery, channel);
   }
 
   //USER FUNCTIONS
@@ -122,26 +135,34 @@ client.on("chat", (channel, userstate, message, self) => {
   //COINS FUNCTIONS
   //VIEW COINS
   if(message.includes("!coins") || message.includes("!chips")){
-    coincmds.viewCoins(client, users, channel, userstate, message, self);
+    coincmds.viewCoins(client, users, channel, userstate);
   //GAMBLE
   }else if(message.includes("!gamble")){
-    casino.gamble(client, users, channel, userstate, message, self);
+    casino.gamble(client, users, channel, userstate, message);
   //SEND COINS
   }else if(message.includes('!send')){
-    coincmds.send(client, users, channel, userstate, message, self);
+    coincmds.send(client, users, channel, userstate, message);
+  }else if(message.toLowerCase().includes('!zwiebeltopf')){
+    coincmds.participateLottery(client, users, channel, userstate, message, lottery);
+  }else if(message.toLowerCase().includes('!chance')){
+    coincmds.showLotteryStats(client, users, channel, userstate, message, lottery);
   }
 
   //COMMAND => ANSWER COMMANDS
   msg = message.split(" ")
-  if(msg.length == 1 && commands.findOne({ command:msg[0]})){
+  if(msg.length == 1 && commands.findOne({ command:msg[0].toLowerCase()})){
     client.say(channel, commands.findOne({ command:msg[0]}).response)
   }
-
+  db.saveDatabase();
 });
 
 //WHISPERS
 client.on("whisper", function (from, userstate, message, self) {
     if (self) return;
+    if(message.includes('!HARDRESET-COINS') && (userstate.username == "dukexentis" || userstate.username == "pokerzwiebel")){
+      users.removeDataOnly();
+      return;
+    }
     if (message.includes('!addcmd') && (userstate.username == "pokerzwiebel" || userstate.username == "dukexentis" || userstate.username == "sunshine_deluxe" || userstate.username == "onlyamiga")){
       parts = message.split(" ")
       if(commands.findOne({ command:parts[1]})){
@@ -153,7 +174,7 @@ client.on("whisper", function (from, userstate, message, self) {
         response += parts[i] + ' '
       }
       commands.insert({
-        command: parts[1],
+        command: parts[1].toLowerCase(),
         response: response,
         createdby: userstate.username
       });

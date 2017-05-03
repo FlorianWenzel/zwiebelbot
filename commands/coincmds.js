@@ -1,10 +1,40 @@
+
+class participant {
+  constructor(name, buyin, winchance) {
+    this.name = name;
+    this.buyin = buyin;
+    this.winchance = winchance;
+  }
+}
+
+function sortParticipants(a, b){
+  if(a.buyin < b.buyin){
+    return 1;
+  }
+  if (a > b){
+    return -1;
+  }
+  return 0;
+}
+
+
+
 module.exports = {
-  viewCoins: function (client, users, channel, userstate, message, self) {
+  knowUser: function(users, username){
+    if(!users.findOne({name:username})){
+      users.insert({
+        name: username,
+        coins: 0
+      });
+    }
+    return;
+  },
+  viewCoins: function (client, users, channel, userstate) {
     if(users.findOne({ name:userstate.username})){
       client.say(channel, userstate.username + ' besitzt '+users.findOne({ name:userstate.username}).coins.toString() + ' ZwiebelCoins!')
     }
   },
-  send: function (client, users, channel, userstate, message, self) {
+  send: function (client, users, channel, userstate, message) {
     msg = message.split(" ")
     if(msg.length != 3 || msg[0] != "!send" || isNaN(msg[2]) || parseInt(msg[2])<=0){
       client.say(channel, 'Benutz !send <Empfänger> <Wie viel> um ZwiebelCoins zu verschicken!')
@@ -22,32 +52,109 @@ module.exports = {
               client.say(channel, userstate.username + ' hat '+msg[2]+' ZwiebelCoins an '+msg[1]+' geschickt.')
           }
       }else{
-          if(sender){
-              client.say(channel, 'Ich kenne keinen ' + msg[1]+ '.')
-              return;
-          }
-        client.say(channel, 'Sorry man aber ich kenne dich (noch) nicht! (Dauert 1-2 Minuten)') //TODO: JUST ADD HIS ASS
+          client.say(channel, 'Ich kenne keinen ' + msg[1]+ '.')
+          return;
+
       }
     }
   },
-  delcmd: function (client, commands, channel, userstate, message, self) {
-      parts = message.split(" ")
-      if(!commands.findOne({ command:parts[1]})){
-        client.say(channel, 'Command '+ parts[1] +' existert nicht.' )
+  startLottery: function (client, lottery, channel) {
+    if(lottery.findOne({ index:0})){
+    }else{
+      lottery.insert({
+        index: 0,
+        enabled: true,
+        participants: new Array
+      });
+    }
+    if(lottery.findOne({index:0}).enabled){
+      client.say(channel, 'Gewinnspiel läuft bereits.')
+    }else{
+      lottery.findOne({ index:0 }).participants = [];
+      client.say(channel, 'Gewinnspiel gestartet!')
+      lottery.findOne({index:0}).enabled = true;
+    }
+  },
+  participateLottery: function (client, users, channel, userstate, message, lottery) {
+    parts = message.split(" ")
+    lotto = lottery.findOne({index:0});
+      if(lotto.enabled && parts.length == 2 && !isNaN(parts[1]) && parseInt(parts[1])>0 && parseInt(parts[1])%1 == 0){
+        if(users.findOne({ name:userstate.username}).coins >= parseInt(parts[1])){
+          for(i = 0; i < lotto.participants.length; i++){
+            if(lotto.participants[i].name == userstate.username){
+              lotto.participants[i].buyin += parseInt(parts[1]);
+              users.findOne({ name:userstate.username}).coins -= parseInt(parts[1]);
+              client.say(channel, 'Du hast nun ' + lotto.participants[i].buyin + ' investiert')
+              return;
+            }
+          }
+          users.findOne({ name:userstate.username}).coins -= parseInt(parts[1]);
+          lotto.participants.push(new participant(userstate.username, parseInt(parts[1]), 0));
+          client.say(channel, 'Du hast nun ' + parts[1] + ' investiert')
+        }else{
+          client.say(channel, 'Zu wenig ZwiebelCoins')
+        }
+      }else{
+        if(lotto.enabled){
+          client.say(channel, 'Syntaxerror, bitte überpüfe deine Eingabe :)')
+        }else{
+          client.say(channel, 'Im moment läuft kein Gewinnspiel!')
+        }
+      }
+  },
+  showLotteryStats: function (client, users, channel, userstate, message, lottery){
+    lotto = lottery.findOne({index:0});
+    if(!lotto.enabled){
+      client.say(channel, "Es läuft gerade kein Gewinnspiel.")
+      return
+    }
+    user = users.findOne({ name:userstate.username});
+    lotto.participants.sort(sortParticipants)
+    oddsMsg = '';
+    allBuyins = 0;
+    for (var i = 0; i < lotto.participants.length; i++){
+      allBuyins += lotto.participants[i].buyin;
+    }
+    for (var i = 0; i < lotto.participants.length; i++) {
+      lotto.participants[i].winchance = lotto.participants[i].buyin/allBuyins;
+      oddsMsg += lotto.participants[i].name + ' Buyin: ' + lotto.participants[i].buyin + ' Winchance: ' +  Math.round(lotto.participants[i].winchance*100)+'%    ';
+    }
+    client.say(channel, oddsMsg)
+  },
+  endLottery: function (client, lottery, channel) {
+      lotto = lottery.findOne({index:0});
+      if(!lotto.enabled){
+        client.say(channel, 'Es läuft kein Gewinnspiel.')
         return
       }
-      oldcmd = commands.findOne({ command:parts[1]});
-      commands.remove(oldcmd);
-      client.say(channel, 'Command ' + parts[1] + ' entfernt.' )
-  },
-  greet: function(client, greet, channel, userstate, message, self){
-    if(greet){
-      greet = false;
-      client.say(channel, 'Begrüßung deaktiviert.')
-    }else{
-      greet = true;
-      client.say(channel, 'Begrüßung aktiviert.')
+      lotto.participants.sort(sortParticipants)
+      lotto.enabled = false;
+      allBuyins = 0;
+      oddsMsg = '';
+      for (var i = 0; i < lotto.participants.length; i++){
+        allBuyins += lotto.participants[i].buyin;
+      }
+      for (var i = 0; i < lotto.participants.length; i++) {
+      lotto.participants[i].winchance = lotto.participants[i].buyin/allBuyins;
+        oddsMsg += lotto.participants[i].name + ' Buyin: ' + lotto.participants[i].buyin + ' Winchance: ' +  Math.round(lotto.participants[i].winchance*100)+'%    ';
+      }
+      var random = Math.random();
+      client.say(channel, oddsMsg)
+      prev = 0;
+      if(lotto.participants.length > 10){
+        toDisplay = 10;
+      }else{
+        toDisplay = lotto.participants.length
+      }
+      for (var i = 0; i < toDisplay; i++) {
+        console.log(random)
+        if(lotto.participants[i].winchance + prev > random || i == lotto.participants.length - 1){
+          client.say(channel, 'Winner: ' + lotto.participants[i].name + '!')
+          return;
+        }else{
+          prev += lotto.participants[i].winchance;
+        }
+      }
+      client.say(channel, 'Lottery ended.')
     }
-    return greet;
-  }
-};
+  };
