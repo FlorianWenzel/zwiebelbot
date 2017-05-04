@@ -5,7 +5,6 @@ var account = require('./account.js');
 
 var tmi = require('tmi.js')
 var loki = require('lokijs')
-var request = require('request')
 
 var greet = false;
 var channel = account.channel;
@@ -48,43 +47,14 @@ function loadHandler() {
       lottery = db.addCollection('lottery');
     }
 }
-
-setInterval(interval, (60000))
+var timer = 0
+setInterval(interval, (1000))
 function interval() {
-  url = "https://tmi.twitch.tv/group/user/"+channel+"/chatters"
-  request({
-      url: url,
-      json: true
-  }, function (error, response, body) {
-      console.log('Giving everybody 1 Coin...')
-      if (!error && response.statusCode === 200) {
-          viewer = new Array;
-          for(i = 0; i < body.chatters.moderators.length; i++){
-            viewer.push(body.chatters.moderators[i])
-          }
-          for(i = 0; i < body.chatters.viewers.length; i++){
-            viewer.push(body.chatters.viewers[i])
-          }
-          for(i = 0; i < body.chatters.global_mods.length; i++){
-            viewer.push(body.chatters.global_mods[i])
-          }
-          for(i = 0; i < body.chatters.admins.length; i++){
-            viewer.push(body.chatters.admins[i])
-          }
-          for(i = 0; i < body.chatters.staff.length; i++){
-            viewer.push(body.chatters.staff[i])
-          }
-          for(i = 0; i <viewer.length; i++){
-            user = users.findOne({ name:viewer[i]});
-            if(user){
-              user.coins += 1
-            }
-          }
-          console.log('...done')
-        }
-  })
-
+  if(timer % 60 == 0){
+    coincmds.giveCoins(channel, users)
+  }
   db.saveDatabase();
+  timer++;
 }
 client.connect();
 console.log('==================   ZWIEBELBOT START   ==================')
@@ -142,6 +112,7 @@ client.on("chat", (channel, userstate, message, self) => {
   //SEND COINS
   }else if(message.includes('!send')){
     coincmds.send(client, users, channel, userstate, message);
+  //ZWIEBELTOPF
   }else if(message.toLowerCase().includes('!zwiebeltopf')){
     coincmds.participateLottery(client, users, channel, userstate, message, lottery);
   }else if(message.toLowerCase().includes('!chance')){
@@ -153,7 +124,6 @@ client.on("chat", (channel, userstate, message, self) => {
   if(msg.length == 1 && commands.findOne({ command:msg[0].toLowerCase()})){
     client.say(channel, commands.findOne({ command:msg[0].toLowerCase()}).response)
   }
-  db.saveDatabase();
 });
 
 //WHISPERS

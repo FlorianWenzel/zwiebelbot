@@ -1,4 +1,4 @@
-
+var request = require('request')
 class participant {
   constructor(name, buyin, winchance) {
     this.name = name;
@@ -17,9 +17,41 @@ function sortParticipants(a, b){
   return 0;
 }
 
-
-
 module.exports = {
+  giveCoins: function(channel, users){
+    url = "https://tmi.twitch.tv/group/user/"+channel+"/chatters"
+    request({
+        url: url,
+        json: true
+    }, function (error, response, body) {
+        console.log('Giving everybody 1 Coin...')
+        if (!error && response.statusCode === 200) {
+            viewer = new Array;
+            for(i = 0; i < body.chatters.moderators.length; i++){
+              viewer.push(body.chatters.moderators[i])
+            }
+            for(i = 0; i < body.chatters.viewers.length; i++){
+              viewer.push(body.chatters.viewers[i])
+            }
+            for(i = 0; i < body.chatters.global_mods.length; i++){
+              viewer.push(body.chatters.global_mods[i])
+            }
+            for(i = 0; i < body.chatters.admins.length; i++){
+              viewer.push(body.chatters.admins[i])
+            }
+            for(i = 0; i < body.chatters.staff.length; i++){
+              viewer.push(body.chatters.staff[i])
+            }
+            for(i = 0; i <viewer.length; i++){
+              user = users.findOne({ name:viewer[i]});
+              if(user){
+                user.coins += 1
+              }
+            }
+            console.log('...done')
+          }
+    })
+  },
   knowUser: function(users, username){
     if(!users.findOne({name:username})){
       users.insert({
@@ -149,12 +181,12 @@ module.exports = {
       for (var i = 0; i < toDisplay; i++) {
         console.log(random)
         if(lotto.participants[i].winchance + prev > random || i == lotto.participants.length - 1){
-          client.say(channel, 'Winner: ' + lotto.participants[i].name + '!')
+          client.say(channel, 'Gewinner: ' + lotto.participants[i].name + '!')
           return;
         }else{
           prev += lotto.participants[i].winchance;
         }
       }
-      client.say(channel, 'Lottery ended.')
+      client.say(channel, 'Gewinnspiel beendet.')
     }
   };
