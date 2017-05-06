@@ -22,6 +22,7 @@ var options = {
   },
   channels: [channel]
 }
+
 var client = new tmi.client(options);
 var db = new loki('database.db',
       {
@@ -82,7 +83,7 @@ client.on("chat", (channel, userstate, message, self) => {
     greet = admincmds.greet(client, greet, channel);
     return;
   }else if(message.includes('!startLottery') && userstate.mod){
-    coincmds.startLottery(client, lottery, channel);
+    coincmds.startLottery(client, message, lottery, channel);
   }else if(message.includes('!endLottery') && userstate.mod){
     coincmds.endLottery(client, lottery, channel);
   }

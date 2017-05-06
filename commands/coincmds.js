@@ -90,20 +90,27 @@ module.exports = {
       }
     }
   },
-  startLottery: function (client, lottery, channel) {
+  startLottery: function (client, message, lottery, channel) {
+    parts = message.split(" ");
+    if(isNaN(parts[1]) && parts[1] != "NL"){
+      client.say(channel, 'Syntaxerror. Benutz !startLottery <Max Einsatz oder NL für NoLimit>')
+      return
+    }
     if(lottery.findOne({ index:0})){
     }else{
       lottery.insert({
         index: 0,
-        enabled: true,
+        enabled: false,
+        maxbuyin: 0,
         participants: new Array
       });
     }
     if(lottery.findOne({index:0}).enabled){
       client.say(channel, 'Gewinnspiel läuft bereits.')
     }else{
-      lottery.findOne({ index:0 }).participants = [];
       client.say(channel, 'Gewinnspiel gestartet!')
+      lottery.findOne({ index:0 }).participants = [];
+      lottery.findOne({ index:0 }).maxbuyin = parts[1];
       lottery.findOne({index:0}).enabled = true;
     }
   },
@@ -114,15 +121,23 @@ module.exports = {
         if(users.findOne({ name:userstate.username}).coins >= parseInt(parts[1])){
           for(i = 0; i < lotto.participants.length; i++){
             if(lotto.participants[i].name == userstate.username){
-              lotto.participants[i].buyin += parseInt(parts[1]);
-              users.findOne({ name:userstate.username}).coins -= parseInt(parts[1]);
-              client.say(channel, 'Du hast nun ' + lotto.participants[i].buyin + ' investiert')
+              if(lotto.participants[i].buyin + parseInt(parts[1]) <= lotto.maxbuyin || lotto.maxbuyin == "NL"){
+                lotto.participants[i].buyin += parseInt(parts[1]);
+                users.findOne({ name:userstate.username}).coins -= parseInt(parts[1]);
+                client.say(channel, 'Du hast nun ' + lotto.participants[i].buyin + ' investiert')
+              }else{
+                client.say(channel, 'Sorry, dann wärst du über dem Maximum von ' + lotto.maxbuyin + '!')
+              }
               return;
             }
           }
-          users.findOne({ name:userstate.username}).coins -= parseInt(parts[1]);
-          lotto.participants.push(new participant(userstate.username, parseInt(parts[1]), 0));
-          client.say(channel, 'Du hast nun ' + parts[1] + ' investiert')
+          if(parseInt(parts[1]) <= lotto.maxbuyin || lotto.maxbuyin == "NL"){
+            users.findOne({ name:userstate.username}).coins -= parseInt(parts[1]);
+            lotto.participants.push(new participant(userstate.username, parseInt(parts[1]), 0));
+            client.say(channel, 'Du hast nun ' + parts[1] + ' investiert')
+          }else{
+            client.say(channel, 'Sorry, dann wärst du über dem Maximum von ' + lotto.maxbuyin + '!')
+          }
         }else{
           client.say(channel, 'Zu wenig ZwiebelCoins')
         }
