@@ -1,6 +1,7 @@
 var admincmds = require('./commands/admincmds.js');
 var coincmds = require('./commands/coincmds.js');
 var casino = require('./commands/gamble.js')
+var broadcast = require('./commands/broadcasts.js')
 var account = require('./account.js');
 
 var tmi = require('tmi.js')
@@ -34,10 +35,12 @@ var db = new loki('database.db',
 var users = null;
 var commands = null;
 var lottery = null;
+var broadcasts = null;
 function loadHandler() {
     users = db.getCollection('users');
     commands = db.getCollection('commands');
-    lottery = db.getCollection('lottery')
+    lottery = db.getCollection('lottery');
+    broadcasts = db.getCollection('broadcasts');
     if (!users) {
         users = db.addCollection('users');
     }
@@ -47,6 +50,9 @@ function loadHandler() {
     if (!lottery) {
       lottery = db.addCollection('lottery');
     }
+    if (!broadcasts) {
+      broadcasts = db.addCollection('broadcasts');
+    }
 }
 var timer = 0
 setInterval(interval, (1000))
@@ -54,6 +60,7 @@ function interval() {
   if(timer % 60 == 0){
     coincmds.giveCoins(channel, users)
   }
+  broadcast.playbrd(client, broadcasts, channel, timer);
   db.saveDatabase();
   timer++;
 }
@@ -82,6 +89,10 @@ client.on("chat", (channel, userstate, message, self) => {
   }else if(message.includes('!greet') && userstate.mod){
     greet = admincmds.greet(client, greet, channel);
     return;
+  }else if(message.toLowerCase().includes('!addbrd') && userstate.mod){
+    broadcast.addbrd(client, broadcasts, channel, message);
+  }else if(message.toLowerCase().includes('delbrd') && userstate.mod){
+    broadcast.delbrd(client, broadcasts, channel, message);
   }else if(message.includes('!startLottery') && userstate.mod){
     coincmds.startLottery(client, message, lottery, channel);
   }else if(message.includes('!endLottery') && userstate.mod){
