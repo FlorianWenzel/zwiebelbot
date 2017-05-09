@@ -93,6 +93,12 @@ client.on("chat", (channel, userstate, message, self) => {
     broadcast.addbrd(client, broadcasts, channel, message);
   }else if(message.toLowerCase().includes('delbrd') && userstate.mod){
     broadcast.delbrd(client, broadcasts, channel, message);
+  }else if(message.toLowerCase().includes('listbrd') && userstate.mod){
+    broadcast.listbrd(client, broadcasts, channel);
+  }else if(message.toLowerCase().includes('pausebrd') && !message.toLowerCase().includes('unpause') && userstate.mod){
+    broadcast.pausebrd(client, broadcasts, channel, message);
+  }else if(message.toLowerCase().includes('unpausebrd') && userstate.mod){
+    broadcast.unpausebrd(client, broadcasts, channel, message);
   }else if(message.includes('!startLottery') && userstate.mod){
     coincmds.startLottery(client, message, lottery, channel);
   }else if(message.includes('!endLottery') && userstate.mod){
