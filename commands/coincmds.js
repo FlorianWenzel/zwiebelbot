@@ -56,6 +56,7 @@ module.exports = {
     if(!users.findOne({name:username})){
       users.insert({
         name: username,
+        gambleCooldown: new Date().getTime() - 100000000,
         coins: 0
       });
     }

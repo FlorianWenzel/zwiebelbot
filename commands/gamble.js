@@ -48,28 +48,29 @@ module.exports = {
     if(msg.length != 2 || msg[0] != "!gamble" || isNaN(msg[1]) || parseInt(msg[1])<0){
       client.say(channel, 'Benutz !gamble <Einsatz> um zu gamblen!')
     }else {
-      gambler = users.findOne({ name:userstate.username});
-      if(gambler){
-          if(gambler.coins < parseInt(msg[1])){
-            client.say(channel, 'Sorry du hast zu wenig ZwiebelCoins!')
-          }else{
-                playerCard = randomCard();
-                dealerCard = randomCard();
-              if(playerCard.value > dealerCard.value){
-                client.say(channel, beatiCard(playerCard) + ' > ' + beatiCard(dealerCard) +' => Gewonnen!')
-                gambler.coins += parseInt(msg[1]);
-              }else if(playerCard.value < dealerCard.value){
-                client.say(channel, beatiCard(playerCard) + ' < ' + beatiCard(dealerCard) +' => Verloren!')
-                gambler.coins -= parseInt(msg[1]);
-              }else{
-                client.say(channel, beatiCard(playerCard) + ' = ' + beatiCard(dealerCard) +' => Unendschieden!')
-              }
-              chips = gambler.coins;
-              client.say(channel, userstate.username + ' hat jetzt ' + chips.toString() + ' ZwiebelCoins')
-              deadCards = [];
-          }
-      }else{
-        client.say(channel, 'Sorry man aber ich kenne dich (noch) nicht! (Dauert 1-2 Minuten)') //TODO: JUST ADD HIS ASS
+        gambler = users.findOne({ name:userstate.username});
+        if(gambler.coins < parseInt(msg[1])){
+          client.say(channel, 'Sorry du hast zu wenig ZwiebelCoins!')
+        }else{
+          if(gambler.gambleCooldown == undefined || gambler.gambleCooldown + 900000 < new Date().getTime()){
+            gambler.gambleCooldown = new Date().getTime();
+            playerCard = randomCard();
+            dealerCard = randomCard();
+            if(playerCard.value > dealerCard.value){
+              client.say(channel, beatiCard(playerCard) + ' > ' + beatiCard(dealerCard) +' => Gewonnen!')
+              gambler.coins += parseInt(msg[1]);
+            }else if(playerCard.value < dealerCard.value){
+              client.say(channel, beatiCard(playerCard) + ' < ' + beatiCard(dealerCard) +' => Verloren!')
+              gambler.coins -= parseInt(msg[1]);
+            }else{
+              client.say(channel, beatiCard(playerCard) + ' = ' + beatiCard(dealerCard) +' => Unendschieden!')
+            }
+            chips = gambler.coins;
+            client.say(channel, userstate.username + ' hat jetzt ' + chips.toString() + ' ZwiebelCoins')
+            deadCards = [];
+        }else{
+          client.say(channel, 'Sorry ' + userstate.username + ', du musst noch ' + (Math.floor(15+(gambler.gambleCooldown - new Date().getTime())/60000)).toString() +":" + (60 + Math.floor((gambler.gambleCooldown - new Date().getTime())/1000) % 60).toString()  + 'm warten bevor du wieder Gambeln kannst')
+        }
       }
     }
   }
