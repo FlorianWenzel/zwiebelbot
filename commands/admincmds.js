@@ -1,6 +1,10 @@
 module.exports = {
   addcmd: function (client, commands, channel, userstate, message, self) {
     parts = message.split(" ")
+    if(parts.length < 2){
+      client.say(channel, 'Syntaxfehler, bitte überprüfe deine Eingabe.')
+      return
+    }
     if(commands.findOne({ command:parts[1]})){
       client.say(channel, 'Command existiert bereits, !editcmd ' + parts[1] + ' um es zu bearteiben.' )
       return
@@ -18,6 +22,10 @@ module.exports = {
   },
   editcmd: function (client, commands, channel, userstate, message, self) {
     parts = message.split(" ")
+    if(parts.length < 2){
+      client.say(channel, 'Syntaxfehler, bitte überprüfe deine Eingabe.')
+      return
+    }
     if(!commands.findOne({ command:parts[1]})){
       client.say(channel, 'Command existiert noch nicht, !addcmd ' + parts[1] + ' um es zu erstellen.')
       return
@@ -32,6 +40,10 @@ module.exports = {
   },
   delcmd: function (client, commands, channel, userstate, message, self) {
       parts = message.split(" ")
+      if(parts.length < 2){
+        client.say(channel, 'Syntaxfehler, bitte überprüfe deine Eingabe.')
+        return
+      }
       if(!commands.findOne({ command:parts[1]})){
         client.say(channel, 'Command '+ parts[1] +' existert nicht.' )
         return
