@@ -1,5 +1,5 @@
 module.exports = {
-  addcmd: function (client, commands, channel, userstate, message, self) {
+  addcmd: function (client, commands, channel, message) {
     parts = message.split(" ")
     if(parts.length < 2){
       client.say(channel, 'Syntaxfehler, bitte überprüfe deine Eingabe.')
@@ -15,12 +15,11 @@ module.exports = {
     }
     commands.insert({
       command: parts[1].toLowerCase(),
-      response: response,
-      createdby: userstate.username
+      response: response
     });
     client.say(channel, 'Command hinzugefügt, ' + parts[1] + ' gibt nun: "'+ response +'" aus.' )
   },
-  editcmd: function (client, commands, channel, userstate, message, self) {
+  editcmd: function (client, commands, channel, message) {
     parts = message.split(" ")
     if(parts.length < 2){
       client.say(channel, 'Syntaxfehler, bitte überprüfe deine Eingabe.')
@@ -38,7 +37,7 @@ module.exports = {
     cmd.response = response;
     client.say(channel, 'Command ersetzt, ' + parts[1] + ' gibt nun: "'+ response +'" aus.' )
   },
-  delcmd: function (client, commands, channel, userstate, message, self) {
+  delcmd: function (client, commands, channel, message) {
       parts = message.split(" ")
       if(parts.length < 2){
         client.say(channel, 'Syntaxfehler, bitte überprüfe deine Eingabe.')

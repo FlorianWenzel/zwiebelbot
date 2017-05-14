@@ -75,15 +75,15 @@ client.on("chat", (channel, userstate, message, self) => {
 
   //ADDCMD
   if (message.includes('!addcmd') && userstate.mod){
-    admincmds.addcmd(client, commands, channel, userstate, message, self);
+    admincmds.addcmd(client, commands, channel, message);
     return;
   //EDITCMD
   }else if(message.includes('!editcmd') && userstate.mod){
-    admincmds.editcmd(client, commands, channel, userstate, message, self);
+    admincmds.editcmd(client, commands, channel, message);
     return;
   //DELCMD
   }else if(message.includes('!delcmd') && userstate.mod){
-    admincmds.delcmd(client, commands, channel, userstate, message, self);
+    admincmds.delcmd(client, commands, channel, message);
     return;
   //GREET
   }else if(message.includes('!greet') && userstate.mod){
