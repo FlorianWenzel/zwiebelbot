@@ -6,7 +6,16 @@ var account = require('./account.js');
 
 var tmi = require('tmi.js')
 var loki = require('lokijs')
+var express = require('express');
+var app = express();
 
+app.get('/', function (req, res) {
+  res.send('<img src="http://img5.fotos-hochladen.net/uploads/stage0g4nmzlsyv7.png">');
+});
+
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
+});
 var greet = false;
 var channel = account.channel;
 var options = {
@@ -103,6 +112,8 @@ client.on("chat", (channel, userstate, message, self) => {
     coincmds.startLottery(client, message, lottery, channel);
   }else if(message.includes('!endLottery') && userstate.mod){
     coincmds.endLottery(client, lottery, channel);
+  }else if(message.includes('!cancelLottery') && userstate.mod){
+    coincmds.cancelLottery(client, users, lottery, channel);
   }
 
   //USER FUNCTIONS

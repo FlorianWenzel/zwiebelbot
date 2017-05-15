@@ -18,6 +18,16 @@ function sortParticipants(a, b){
 }
 
 module.exports = {
+  knowUser: function(users, username){
+    if(!users.findOne({name:username})){
+      users.insert({
+        name: username,
+        gambleCooldown: new Date().getTime() - 100000000,
+        coins: 0
+      });
+    }
+    return;
+  },
   giveCoins: function(channel, users){
     url = "https://tmi.twitch.tv/group/user/"+channel+"/chatters"
     request({
@@ -51,16 +61,6 @@ module.exports = {
             console.log('...done')
           }
     })
-  },
-  knowUser: function(users, username){
-    if(!users.findOne({name:username})){
-      users.insert({
-        name: username,
-        gambleCooldown: new Date().getTime() - 100000000,
-        coins: 0
-      });
-    }
-    return;
   },
   viewCoins: function (client, users, channel, userstate) {
     if(users.findOne({ name:userstate.username})){
@@ -204,5 +204,21 @@ module.exports = {
         }
       }
       client.say(channel, 'Gewinnspiel beendet.')
-    }
+    },
+    cancelLottery: function (client, users, lottery, channel) {
+        lotto = lottery.findOne({index:0});
+        if(!lotto.enabled){
+          client.say(channel, 'Es läuft kein Gewinnspiel.')
+          return
+        }
+        lotto.participants.sort(sortParticipants)
+        lotto.enabled = false;
+        allBuyins = 0;
+        oddsMsg = '';
+        for (var i = 0; i < lotto.participants.length; i++){
+          users.findOne({ name:lotto.participants[i].name}).coins += lotto.participants[i].buyin;
+        }
+        lotto.participants = []
+        client.say(channel, 'Gewinnspiel abgebrochen und Einsätze zurückerstattet.')
+      }
   };
