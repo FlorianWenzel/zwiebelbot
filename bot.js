@@ -195,9 +195,9 @@ bot.on('ready', function() {
 bot.on('message', function(user, userID, channelID, message, event) {
   //COMMAND => ANSWER COMMANDS
   console.log('<DISCORD> ' + user +': ' + message)
-  if(message.includes('!hidediscord') && userID == 306705915162263562){
+  if(message.includes('!hidediscord') && (userID == 306705915162263562 || userID == 238670889397256193)){
       admincmds.hidediscord('discord', bot, commands, channelID, message);
-  }else if(message.includes('!hidetwitch') && userID == 306705915162263562){
+  }else if(message.includes('!hidetwitch') && (userID == 306705915162263562 || userID == 238670889397256193)){
       admincmds.hidetwitch('discord', bot, commands, channelID, message);
   }
   msg = message.split(" ")
