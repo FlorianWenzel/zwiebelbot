@@ -4,23 +4,18 @@ var casino = require('./commands/gamble.js')
 var broadcast = require('./commands/broadcasts.js')
 var account = require('./account.js');
 
+var Discord = require('discord.io');
 var tmi = require('tmi.js')
 var loki = require('lokijs')
-var express = require('express');
-var app = express();
 
-app.get('/', function (req, res) {
-  res.send('<img src="http://img5.fotos-hochladen.net/uploads/stage0g4nmzlsyv7.png">');
-});
-
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
-});
+//##################################################################################################################
+//################################################### TWITCH BOT ###################################################
+//##################################################################################################################
 var greet = false;
 var channel = account.channel;
 var options = {
   options: {
-    debug: true
+    debug: false
   },
   connection: {
     reconnect: true,
@@ -34,7 +29,7 @@ var options = {
 }
 
 var client = new tmi.client(options);
-var db = new loki('database.db',
+var db = new loki('./database.db',
       {
         autoload: true,
         autoloadCallback : loadHandler,
@@ -74,8 +69,9 @@ function interval() {
   timer++;
 }
 client.connect();
-console.log('==================   ZWIEBELBOT START   ==================')
+console.log('*****TWITCHBOT ONLINE*****')
 client.on("chat", (channel, userstate, message, self) => {
+  console.log('<TWITCH> ' + userstate.username + ': ' + message)
   if(self){
     return
   }
@@ -98,6 +94,10 @@ client.on("chat", (channel, userstate, message, self) => {
   }else if(message.includes('!greet') && userstate.mod){
     greet = admincmds.greet(client, greet, channel);
     return;
+  }else if(message.includes('!hidediscord') && userstate.mod){
+      admincmds.hidediscord('twitch', client, commands, channel, message);
+  }else if(message.includes('!hidetwitch') && userstate.mod){
+      admincmds.hidetwitch('twitch', client, commands, channel, message);
   }else if(message.toLowerCase().includes('!addbrd') && userstate.mod){
     broadcast.addbrd(client, broadcasts, channel, message);
   }else if(message.toLowerCase().includes('delbrd') && userstate.mod){
@@ -121,13 +121,17 @@ client.on("chat", (channel, userstate, message, self) => {
   //LIST COMMANDS
   if(message.toLowerCase() ==  '!commands'){
     var cmds = commands.where(function(obj) {
-    return true;
+      if(!obj.hidetwitch)
+        return true;
+      return false;
     });
     msg = ''
     for(i=0;i<cmds.length;i++){
-      msg += cmds[i].command + ', '
+      msg += cmds[i].command
+      if(i != cmds.length -1){
+        msg += ', '
+      }
     }
-    msg += '!commands, !coins, !gamble, !send'
     client.say(channel, msg)
   }
 
@@ -155,66 +159,9 @@ client.on("chat", (channel, userstate, message, self) => {
   }
 });
 
-//WHISPERS
-client.on("whisper", function (from, userstate, message, self) {
-    if (self) return;
-    if(message.includes('!HARDRESET-COINS') && (userstate.username == "dukexentis" || userstate.username == "pokerzwiebel")){
-      users.removeDataOnly();
-      return;
-    }
-    if (message.includes('!addcmd') && (userstate.username == "pokerzwiebel" || userstate.username == "dukexentis" || userstate.username == "sunshine_deluxe" || userstate.username == "onlyamiga")){
-      parts = message.split(" ")
-      if(commands.findOne({ command:parts[1]})){
-        client.whisper(from, 'Command existiert bereits, !editcmd ' + parts[1] + ' um es zu bearteiben.' )
-        return
-      }
-      response = '';
-      for(i=2;i<parts.length;i++){
-        response += parts[i] + ' '
-      }
-      commands.insert({
-        command: parts[1].toLowerCase(),
-        response: response,
-        createdby: userstate.username
-      });
-      client.whisper(from, 'Command hinzugefügt, ' + parts[1] + ' gibt nun: "'+ response +'" aus.' )
-    }else if(message.includes('!editcmd') && (userstate.username == "pokerzwiebel" || userstate.username == "dukexentis" || userstate.username == "sunshine_deluxe" || userstate.username == "onlyamiga")){
-      parts = message.split(" ")
-      if(!commands.findOne({ command:parts[1]})){
-        client.whisper(from, 'Command existiert noch nicht, !addcmd ' + parts[1] + ' um es zu erstellen.' )
-        return
-      }
-      response = '';
-      for(i=2;i<parts.length;i++){
-        response += parts[i] + ' '
-      }
-      cmd = commands.findOne({ command:parts[1]});
-      cmd.response = parts[2];
-      client.whisper(from, 'Command ersetzt, ' + parts[1] + ' gibt nun: "'+ response +'" aus.' )
-    }else if(message.includes('!delcmd') && (userstate.username == "pokerzwiebel" || userstate.username == "dukexentis" || userstate.username == "sunshine_deluxe" || userstate.username == "onlyamiga")){
-      parts = message.split(" ")
-      if(!commands.findOne({ command:parts[1]})){
-        client.whisper(from, 'Command '+ parts[1] +' existert nicht.' )
-        return
-      }
-      oldcmd = commands.findOne({ command:parts[1]});
-      commands.remove(oldcmd);
-      client.whisper(from, 'Command ' + parts[1] + ' entfernt.' )
-    }else if(message.includes('!greet') && (userstate.username == "pokerzwiebel" || userstate.username == "dukexentis" || userstate.username == "sunshine_deluxe" || userstate.username == "onlyamiga")){
-      if(greet){
-        greet = false;
-        client.whisper(from, 'Begrüßung deaktiviert.')
-      }else{
-        greet = true;
-        client.whisper(from, 'Begrüßung aktiviert.')
-      }
-    }
-});
-
 
 //GREETING
 client.on("join", function (self, username) {
-  console.log(username + ' is now watching the stream')
   if(users.findOne({ name:username }) == null){
     if(greet && username != "zwiebeibot"){
       client.say(channel, "Willkommen im Zwiebelstream, " + username + "!");
@@ -227,6 +174,53 @@ client.on("join", function (self, username) {
     if(greet && username != "zwiebeibot"){
       client.say(channel, "Willkommen zurück im Zwiebelstream, " + username + "! ");
     }
+  }
+  db.saveDatabase();
+});
+
+
+//###################################################################################################################
+//################################################### DISCORD BOT ###################################################
+//###################################################################################################################
+
+var bot = new Discord.Client({
+    token: account.token,
+    autorun: true
+});
+
+bot.on('ready', function() {
+    console.log('*****DISCORDBOT ONLINE*****');
+});
+
+bot.on('message', function(user, userID, channelID, message, event) {
+  //COMMAND => ANSWER COMMANDS
+  console.log('<DISCORD> ' + user +': ' + message)
+  if(message.includes('!hidediscord') && userID == 306705915162263562){
+      admincmds.hidediscord('discord', bot, commands, channelID, message);
+  }else if(message.includes('!hidetwitch') && userID == 306705915162263562){
+      admincmds.hidetwitch('discord', bot, commands, channelID, message);
+  }
+  msg = message.split(" ")
+  if(msg.length == 1 && commands.findOne({ command:msg[0].toLowerCase()})){
+    bot.sendMessage({ to:channelID, message:commands.findOne({ command:msg[0].toLowerCase()}).response})
+  }
+  if(message === '!giveID'){
+    bot.sendMessage( {to:channelID, message: userID})
+  }
+  if(message  ===  '!commands'){
+    var cmds = commands.where(function(obj) {
+      if(!obj.hidediscord)
+        return true;
+      return false;
+    });
+    msg = ''
+    for(i=0;i<cmds.length;i++){
+      msg += cmds[i].command
+      if(i != cmds.length -1){
+        msg += ', '
+      }
+    }
+    bot.sendMessage( {to:channelID, message: msg})
   }
   db.saveDatabase();
 });

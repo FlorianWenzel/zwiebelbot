@@ -52,6 +52,76 @@ module.exports = {
       commands.remove(cmd);
       client.say(channel, 'Command ' + parts[1] + ' entfernt.' )
   },
+  hidediscord: function (platform, bot, commands, channel, message) {
+      parts = message.split(" ")
+      if(parts.length < 2){
+        if(platform == "twitch"){
+          bot.say(channel, 'Syntaxfehler, bitte überprüfe deine Eingabe.')
+        }else if(platform == "discord"){
+          bot.sendMessage({ to:channel, message:'Syntaxfehler, bitte überprüfe deine Eingabe.'})
+        }
+        return
+      }
+      if(!commands.findOne({ command:parts[1]})){
+        if(platform == "twitch"){
+          bot.say(channel, 'Command '+ parts[1] +' existert nicht.' )
+        }else if(platform == "discord"){
+          bot.sendMessage({ to:channel, message:'Command '+ parts[1] +' existert nicht.'})
+        }
+        return
+      }
+      cmd = commands.findOne({ command:parts[1]});
+      if(cmd.hidediscord){
+        cmd.hidediscord = false;
+        if(platform == "twitch"){
+          bot.say(channel, 'Command ' + parts[1] + ' wird nun im Discord nicht mehr versteckt.' )
+        }else if(platform == "discord"){
+          bot.sendMessage({ to:channel, message:'Command ' + parts[1] + ' wird nun im Discord nicht mehr versteckt.'})
+        }
+      }else{
+        cmd.hidediscord = true;
+        if(platform == "twitch"){
+          bot.say(channel, 'Command ' + parts[1] + ' wird nun im Discord versteckt.' )
+        }else if(platform == "discord"){
+          bot.sendMessage({ to:channel, message:'Command ' + parts[1] + ' wird nun im Discord versteckt.'})
+        }
+      }
+  },
+  hidetwitch: function (platform, bot, commands, channel, message) {
+    parts = message.split(" ")
+    if(parts.length < 2){
+      if(platform == "twitch"){
+        bot.say(channel, 'Syntaxfehler, bitte überprüfe deine Eingabe.')
+      }else if(platform == "discord"){
+        bot.sendMessage({ to:channel, message:'Syntaxfehler, bitte überprüfe deine Eingabe.'})
+      }
+      return
+    }
+    if(!commands.findOne({ command:parts[1]})){
+      if(platform == "twitch"){
+        bot.say(channel, 'Command '+ parts[1] +' existert nicht.' )
+      }else if(platform == "discord"){
+        bot.sendMessage({ to:channel, message:'Command '+ parts[1] +' existert nicht.'})
+      }
+      return
+    }
+    cmd = commands.findOne({ command:parts[1]});
+    if(cmd.hidetwitch){
+      cmd.hidetwitch = false;
+      if(platform == "twitch"){
+        bot.say(channel, 'Command ' + parts[1] + ' wird nun im Twitchchat nicht mehr versteckt.' )
+      }else if(platform == "discord"){
+        bot.sendMessage({ to:channel, message:'Command ' + parts[1] + ' wird nun im Twitchchat nicht mehr versteckt.'})
+      }
+    }else{
+      cmd.hidetwitch = true;
+      if(platform == "twitch"){
+        bot.say(channel, 'Command ' + parts[1] + ' wird nun im Twitchchat versteckt.' )
+      }else if(platform == "discord"){
+        bot.sendMessage({ to:channel, message:'Command ' + parts[1] + ' wird nun im Twitchchat versteckt.'})
+      }
+    }
+  },
   greet: function(client, greet, channel){
     if(greet){
       greet = false;

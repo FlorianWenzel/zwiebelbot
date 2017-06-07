@@ -34,7 +34,6 @@ module.exports = {
         url: url,
         json: true
     }, function (error, response, body) {
-        console.log('Giving everybody 1 Coin...')
         if (!error && response.statusCode === 200) {
             viewer = new Array;
             for(i = 0; i < body.chatters.moderators.length; i++){
@@ -58,7 +57,6 @@ module.exports = {
                 user.coins += 1
               }
             }
-            console.log('...done')
           }
     })
   },
