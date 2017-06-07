@@ -28,37 +28,50 @@ module.exports = {
     }
     return;
   },
-  giveCoins: function(channel, users){
-    url = "https://tmi.twitch.tv/group/user/"+channel+"/chatters"
+  giveCoins: function(channel, users, twitchID){
+    var online;
     request({
-        url: url,
+        url: 'https://api.twitch.tv/kraken/streams/pokerzwiebel?client_id=' + twitchID,
         json: true
     }, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            viewer = new Array;
-            for(i = 0; i < body.chatters.moderators.length; i++){
-              viewer.push(body.chatters.moderators[i])
-            }
-            for(i = 0; i < body.chatters.viewers.length; i++){
-              viewer.push(body.chatters.viewers[i])
-            }
-            for(i = 0; i < body.chatters.global_mods.length; i++){
-              viewer.push(body.chatters.global_mods[i])
-            }
-            for(i = 0; i < body.chatters.admins.length; i++){
-              viewer.push(body.chatters.admins[i])
-            }
-            for(i = 0; i < body.chatters.staff.length; i++){
-              viewer.push(body.chatters.staff[i])
-            }
-            for(i = 0; i <viewer.length; i++){
-              user = users.findOne({ name:viewer[i]});
-              if(user){
-                user.coins += 1
+      if(body.stream == null){
+        online = false
+      }else{
+        online = true
+      }
+    })
+    if(online){
+      url = "https://tmi.twitch.tv/group/user/"+channel+"/chatters"
+      request({
+          url: url,
+          json: true
+      }, function (error, response, body) {
+          if (!error && response.statusCode === 200) {
+              viewer = new Array;
+              for(i = 0; i < body.chatters.moderators.length; i++){
+                viewer.push(body.chatters.moderators[i])
+              }
+              for(i = 0; i < body.chatters.viewers.length; i++){
+                viewer.push(body.chatters.viewers[i])
+              }
+              for(i = 0; i < body.chatters.global_mods.length; i++){
+                viewer.push(body.chatters.global_mods[i])
+              }
+              for(i = 0; i < body.chatters.admins.length; i++){
+                viewer.push(body.chatters.admins[i])
+              }
+              for(i = 0; i < body.chatters.staff.length; i++){
+                viewer.push(body.chatters.staff[i])
+              }
+              for(i = 0; i <viewer.length; i++){
+                user = users.findOne({ name:viewer[i]});
+                if(user){
+                  user.coins += 1
               }
             }
           }
-    })
+        })
+      }
   },
   viewCoins: function (client, users, channel, userstate) {
     if(users.findOne({ name:userstate.username})){

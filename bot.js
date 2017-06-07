@@ -62,7 +62,7 @@ var timer = 0
 setInterval(interval, (1000))
 function interval() {
   if(timer % 60 == 0){
-    coincmds.giveCoins(channel, users)
+    coincmds.giveCoins(channel, users, account.twitchID)
   }
   broadcast.playbrd(client, broadcasts, channel, timer);
   db.saveDatabase();
