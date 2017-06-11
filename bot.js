@@ -205,7 +205,7 @@ client.on("whisper", function (from, userstate, message, self) {
     //LIST COMMANDS
     if(message  ===  '!commands'){
       var cmds = commands.where(function(obj) {
-        if(!obj.hidediscord)
+        if(!obj.hidetwitch)
           return true;
         return false;
       });
