@@ -1,8 +1,12 @@
 module.exports = {
-  addbrd: function (client, broadcasts, channel, message) {
+  addbrd: function (platform, bot, broadcasts, channel, message) {
     parts = message.split(" ")
+    if(parts.length < 4){
+      say(platform, bot, channel, 'Syntaxerror :( ! https://xentis.me/bot-dokumentation' )
+      return
+    }
     if(broadcasts.findOne({ id:parts[1].toLowerCase()})){
-      client.say(channel, 'Broadcast existiert bereits.' )
+      say(platform, bot, channel, 'Broadcast existiert bereits.' )
       return
     }
     if(isNaN(parts[2]) || parts[2]%1 != 0){
@@ -18,56 +22,56 @@ module.exports = {
       freq: parts[2],
       paused: false
     });
-    client.say(channel, 'Broadcast hinzugefügt, ID:' + parts[1] + ' gibt nun: "'+ response +'" alle '+parts[2]+'s aus.' )
+    say(platform, bot, channel, 'Broadcast hinzugefügt, ID:' + parts[1] + ' gibt nun: "'+ response +'" alle '+parts[2]+'s aus.' )
   },
-  delbrd: function (client, broadcasts, channel, message) {
+  delbrd: function (platform, bot, broadcasts, channel, message) {
     parts = message.split(" ")
     if(!broadcasts.findOne({ id:parts[1]})){
-      client.say(channel, 'Broadcast '+ parts[1] +' existert nicht.' )
+      say(platform, bot, channel, 'Broadcast '+ parts[1] +' existert nicht.' )
       return
     }
     toRemove = broadcasts.findOne({ id:parts[1]});
     broadcasts.remove(toRemove);
-    client.say(channel, 'Broadcast ID:' + parts[1] + ' entfernt.' )
+    say(platform, bot, channel, 'Broadcast ID:' + parts[1] + ' entfernt.' )
   },
-  playbrd: function (client, broadcastdb, channel, time) {
+  playbrd: function (platform, bot, broadcastdb, channel, time) {
     var broadcasts = broadcastdb.where(function (obj) {
       return true;
     });
     for(i=0; i<broadcasts.length; i++){
       if(!broadcasts[i].paused && time % broadcasts[i].freq == 0)
-        client.say(channel, broadcasts[i].response)
+        say(platform, bot, channel, broadcasts[i].response)
     }
   },
-  pausebrd: function (client, broadcasts, channel, message) {
+  pausebrd: function (platform, bot, broadcasts, channel, message) {
     parts = message.split(" ")
     if(!broadcasts.findOne({ id:parts[1]})){
-      client.say(channel, 'Broadcast '+ parts[1] +' existert nicht.' )
+      say(platform, bot, channel, 'Broadcast '+ parts[1] +' existert nicht.' )
       return
     }
     toPause = broadcasts.findOne({ id:parts[1]});
     if(toPause.paused){
-      client.say(channel, 'Broadcast ID:' + parts[1] + ' ist bereits pausiert.' )
+      say(platform, bot, channel, 'Broadcast ID:' + parts[1] + ' ist bereits pausiert.' )
       return
     }
     toPause.paused = true
-    client.say(channel, 'Broadcast ID:' + parts[1] + ' pausiert.' )
+    say(platform, bot, channel, 'Broadcast ID:' + parts[1] + ' pausiert.' )
   },
-  unpausebrd: function (client, broadcasts, channel, message) {
+  unpausebrd: function (platform, bot, broadcasts, channel, message) {
     parts = message.split(" ")
     if(!broadcasts.findOne({ id:parts[1]})){
-      client.say(channel, 'Broadcast '+ parts[1] +' existert nicht.' )
+      say(platform, bot, channel, 'Broadcast '+ parts[1] +' existert nicht.' )
       return
     }
     toPause = broadcasts.findOne({ id:parts[1]});
     if(!toPause.paused){
-      client.say(channel, 'Broadcast ID:' + parts[1] + ' ist nicht pausiert.' )
+      say(platform, bot, channel, 'Broadcast ID:' + parts[1] + ' ist nicht pausiert.' )
       return
     }
     toPause.paused = false
-    client.say(channel, 'Broadcast ID:' + parts[1] + ' unpausiert.' )
+    say(platform, bot, channel, 'Broadcast ID:' + parts[1] + ' unpausiert.' )
   },
-  listbrd: function (client, broadcastdb, channel) {
+  listbrd: function (platform, bot, broadcastdb, channel) {
     var broadcasts = broadcastdb.where(function (obj) {
       return true;
     });
@@ -79,6 +83,15 @@ module.exports = {
         msg += 'ID: ' + broadcasts[i].id + ' ist pausiert. Und gibt: "' + broadcasts[i].response + '" alle '+broadcasts[i].freq + 's aus.'
       }
     }
-    client.say(channel, msg)
+    say(platform, bot, channel, msg)
   }
 };
+function say(platform, bot, channel, message){
+  if(platform == 'discord'){
+    bot.sendMessage({to:channel, message:message})
+  }else if(platform == 'twitch'){
+    bot.say(channel, message)
+  }else if(platform == 'twitchwhisper'){
+    bot.whisper(channel, message)
+  }
+}

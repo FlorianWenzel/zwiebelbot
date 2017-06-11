@@ -64,59 +64,61 @@ function interval() {
   if(timer % 60 == 0){
     coincmds.giveCoins(channel, users, account.twitchID)
   }
-  broadcast.playbrd(client, broadcasts, channel, timer);
+  broadcast.playbrd('twitch', client, broadcasts, channel, timer);
   db.saveDatabase();
   timer++;
 }
 client.connect();
 console.log('*****TWITCHBOT ONLINE*****')
+
+//################################################### TWITCH CHAT ###################################################
 client.on("chat", (channel, userstate, message, self) => {
   console.log('<TWITCH> ' + userstate.username + ': ' + message)
   if(self){
     return
   }
   coincmds.knowUser(users, userstate.username)
-  //ADMIN FUNCTIONS
 
-  //ADDCMD
-  if (message.includes('!addcmd') && userstate.mod){
-    admincmds.addcmd(client, commands, channel, message);
-    return;
-  //EDITCMD
-  }else if(message.includes('!editcmd') && userstate.mod){
-    admincmds.editcmd(client, commands, channel, message);
-    return;
-  //DELCMD
-  }else if(message.includes('!delcmd') && userstate.mod){
-    admincmds.delcmd(client, commands, channel, message);
-    return;
-  //GREET
-  }else if(message.includes('!greet') && userstate.mod){
-    greet = admincmds.greet(client, greet, channel);
-    return;
-  }else if(message.includes('!hidediscord') && userstate.mod){
-      admincmds.hidediscord('twitch', client, commands, channel, message);
-  }else if(message.includes('!hidetwitch') && userstate.mod){
-      admincmds.hidetwitch('twitch', client, commands, channel, message);
-  }else if(message.toLowerCase().includes('!addbrd') && userstate.mod){
-    broadcast.addbrd(client, broadcasts, channel, message);
-  }else if(message.toLowerCase().includes('delbrd') && userstate.mod){
-    broadcast.delbrd(client, broadcasts, channel, message);
-  }else if(message.toLowerCase().includes('listbrd') && userstate.mod){
-    broadcast.listbrd(client, broadcasts, channel);
-  }else if(message.toLowerCase().includes('pausebrd') && !message.toLowerCase().includes('unpause') && userstate.mod){
-    broadcast.pausebrd(client, broadcasts, channel, message);
-  }else if(message.toLowerCase().includes('unpausebrd') && userstate.mod){
-    broadcast.unpausebrd(client, broadcasts, channel, message);
-  }else if(message.includes('!startLottery') && userstate.mod){
-    coincmds.startLottery(client, message, lottery, channel);
-  }else if(message.includes('!endLottery') && userstate.mod){
-    coincmds.endLottery(client, lottery, channel);
-  }else if(message.includes('!cancelLottery') && userstate.mod){
-    coincmds.cancelLottery(client, users, lottery, channel);
+  //MOD FUNCTIONS
+  if(userstate.mod){
+    if (message.includes('!addcmd')){
+      admincmds.addcmd('twitch', client, commands, channel, message);
+      return;
+    //EDITCMD
+    }else if(message.includes('!editcmd')){
+      admincmds.editcmd('twitch', client, commands, channel, message);
+      return;
+    //DELCMD
+    }else if(message.includes('!delcmd')){
+      admincmds.delcmd('twitch', client, commands, channel, message);
+      return;
+    //GREET
+    }else if(message.includes('!greet')){
+      greet = admincmds.greet(client, greet, channel);
+      return;
+    }else if(message.includes('!hidediscord')){
+        admincmds.hidediscord('twitch', client, commands, channel, message);
+    }else if(message.includes('!hidetwitch')){
+        admincmds.hidetwitch('twitch', client, commands, channel, message);
+    }else if(message.toLowerCase().includes('!addbrd')){
+      broadcast.addbrd('twitch', client, broadcasts, channel, message);
+    }else if(message.toLowerCase().includes('delbrd')){
+      broadcast.delbrd('twitch', client, broadcasts, channel, message);
+    }else if(message.toLowerCase().includes('listbrd')){
+      broadcast.listbrd('twitch', client, broadcasts, channel);
+    }else if(message.toLowerCase().includes('pausebrd') && !message.toLowerCase().includes('unpause')){
+      broadcast.pausebrd('twitch', client, broadcasts, channel, message);
+    }else if(message.toLowerCase().includes('unpausebrd')){
+      broadcast.unpausebrd('twitch', client, broadcasts, channel, message);
+    }else if(message.includes('!startLottery')){
+      coincmds.startLottery(client, message, lottery, channel);
+    }else if(message.includes('!endLottery')){
+      coincmds.endLottery(client, lottery, channel);
+    }else if(message.includes('!cancelLottery')){
+      coincmds.cancelLottery(client, users, lottery, channel);
+    }
   }
 
-  //USER FUNCTIONS
 
   //LIST COMMANDS
   if(message.toLowerCase() ==  '!commands'){
@@ -152,12 +154,14 @@ client.on("chat", (channel, userstate, message, self) => {
     coincmds.showLotteryStats(client, users, channel, userstate, message, lottery);
   }
 
-  //COMMAND => ANSWER COMMANDS
+  //CUSTOM COMMANDS
   msg = message.split(" ")
   if(msg.length == 1 && commands.findOne({ command:msg[0].toLowerCase()})){
     client.say(channel, commands.findOne({ command:msg[0].toLowerCase()}).response)
   }
 });
+
+//################################################### TWITCH WHISPER ###################################################
 
 
 //GREETING
@@ -182,7 +186,7 @@ client.on("join", function (self, username) {
 //###################################################################################################################
 //################################################### DISCORD BOT ###################################################
 //###################################################################################################################
-
+var admins = ['306705915162263562', '238670889397256193', '248185632768262145']
 var bot = new Discord.Client({
     token: account.token,
     autorun: true
@@ -193,20 +197,52 @@ bot.on('ready', function() {
 });
 
 bot.on('message', function(user, userID, channelID, message, event) {
-  //COMMAND => ANSWER COMMANDS
   console.log('<DISCORD> ' + user +': ' + message)
-  if(message.includes('!hidediscord') && (userID == 306705915162263562 || userID == 238670889397256193)){
+
+  //ADMINCOMMANDS
+  if(admins.includes(userID)){
+    if (message.includes('!addcmd')){
+      admincmds.addcmd('discord', bot, commands, channelID, message);
+      return;
+    //EDITCMD
+    }else if(message.includes('!editcmd')){
+      admincmds.editcmd('discord', bot, commands, channelID, message);
+      return;
+    //DELCMD
+    }else if(message.includes('!delcmd')){
+      admincmds.delcmd('discord', bot, commands, channelID, message);
+      return;
+    //HIDE
+    }else if(message.includes('!hidediscord') && admins.includes(userID)){
       admincmds.hidediscord('discord', bot, commands, channelID, message);
-  }else if(message.includes('!hidetwitch') && (userID == 306705915162263562 || userID == 238670889397256193)){
+    }else if(message.includes('!hidetwitch') && admins.includes(userID)){
       admincmds.hidetwitch('discord', bot, commands, channelID, message);
+    //BROADCASTS
+    }else if(message.toLowerCase().includes('!addbrd')){
+      broadcast.addbrd('discord', bot, broadcasts, channelID, message);
+    }else if(message.toLowerCase().includes('delbrd')){
+      broadcast.delbrd('discord', bot, broadcasts, channelID, message);
+    }else if(message.toLowerCase().includes('listbrd')){
+      broadcast.listbrd('discord', bot, broadcasts, channelID);
+    }else if(message.toLowerCase().includes('pausebrd') && !message.toLowerCase().includes('unpause')){
+      broadcast.pausebrd('discord', bot, broadcasts, channelID, message);
+    }else if(message.toLowerCase().includes('unpausebrd')){
+      broadcast.unpausebrd('discord', bot, broadcasts, channelID, message);
+    }
   }
+
+  //CUSTOM COMMANDS
   msg = message.split(" ")
   if(msg.length == 1 && commands.findOne({ command:msg[0].toLowerCase()})){
     bot.sendMessage({ to:channelID, message:commands.findOne({ command:msg[0].toLowerCase()}).response})
   }
-  if(message === '!giveID'){
+
+  //GET ID
+  if(message === '!getID'){
     bot.sendMessage( {to:channelID, message: userID})
   }
+
+  //LIST COMMANDS
   if(message  ===  '!commands'){
     var cmds = commands.where(function(obj) {
       if(!obj.hidediscord)
