@@ -165,9 +165,8 @@ client.on("chat", (channel, userstate, message, self) => {
 var twitchmods = ['#pokerzwiebel', '#onlyamiga', '#dukexentis'];
 client.on("whisper", function (from, userstate, message, self) {
     if (self) return;
-    console.log(from)
+    console.log('<TWITCH WHISPER> ' + from + ': ' + message);
     if(twitchmods.includes(from)){
-      console.log('imamod')
       if (message.includes('!addcmd')){
         admincmds.addcmd('twitchwhisper', client, commands, from, message);
         return;
@@ -197,6 +196,28 @@ client.on("whisper", function (from, userstate, message, self) {
         broadcast.unpausebrd('twitchwhisper', client, broadcasts, from, message);
       }
     }
+
+    msg = message.split(" ")
+    if(msg.length == 1 && commands.findOne({ command:msg[0].toLowerCase()})){
+      client.whisper( from, commands.findOne({ command:msg[0].toLowerCase()}).response)
+    }
+
+    //LIST COMMANDS
+    if(message  ===  '!commands'){
+      var cmds = commands.where(function(obj) {
+        if(!obj.hidediscord)
+          return true;
+        return false;
+      });
+      msg = ''
+      for(i=0;i<cmds.length;i++){
+        msg += cmds[i].command
+        if(i != cmds.length -1){
+          msg += ', '
+        }
+      }
+      client.whisper(from, msg)
+    }
 });
 
 //################################################### TWITCH GREETING ###################################################
@@ -214,7 +235,6 @@ client.on("join", function (self, username) {
       client.say(channel, "Willkommen zurück im Zwiebelstream, " + username + "! ");
     }
   }
-  db.saveDatabase();
 });
 
 
