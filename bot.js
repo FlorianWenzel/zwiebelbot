@@ -162,9 +162,65 @@ client.on("chat", (channel, userstate, message, self) => {
 });
 
 //################################################### TWITCH WHISPER ###################################################
+var twitchmods = ['#pokerzwiebel', '#onlyamiga', '#dukexentis'];
+client.on("whisper", function (from, userstate, message, self) {
+    if (self) return;
+    console.log('<TWITCH WHISPER> ' + from + ': ' + message);
+    if(twitchmods.includes(from)){
+      if (message.includes('!addcmd')){
+        admincmds.addcmd('twitchwhisper', client, commands, from, message);
+        return;
+      //EDITCMD
+      }else if(message.includes('!editcmd')){
+        admincmds.editcmd('twitchwhisper', client, commands, from, message);
+        return;
+      //DELCMD
+      }else if(message.includes('!delcmd')){
+        admincmds.delcmd('twitchwhisper', client, commands, from, message);
+        return;
+      //HIDE
+      }else if(message.includes('!hidediscord') && admins.includes(userID)){
+        admincmds.hidediscord('twitchwhisper', client, commands, from, message);
+      }else if(message.includes('!hidetwitch') && admins.includes(userID)){
+        admincmds.hidetwitch('twitchwhisper', client, commands, from, message);
+      //BROADCASTS
+      }else if(message.toLowerCase().includes('!addbrd')){
+        broadcast.addbrd('twitchwhisper', client, broadcasts, from, message);
+      }else if(message.toLowerCase().includes('delbrd')){
+        broadcast.delbrd('twitchwhisper', client, broadcasts, from, message);
+      }else if(message.toLowerCase().includes('listbrd')){
+        broadcast.listbrd('twitchwhisper', client, broadcasts, from);
+      }else if(message.toLowerCase().includes('pausebrd') && !message.toLowerCase().includes('unpause')){
+        broadcast.pausebrd('twitchwhisper', client, broadcasts, from, message);
+      }else if(message.toLowerCase().includes('unpausebrd')){
+        broadcast.unpausebrd('twitchwhisper', client, broadcasts, from, message);
+      }
+    }
 
+    msg = message.split(" ")
+    if(msg.length == 1 && commands.findOne({ command:msg[0].toLowerCase()})){
+      client.whisper( from, commands.findOne({ command:msg[0].toLowerCase()}).response)
+    }
 
-//GREETING
+    //LIST COMMANDS
+    if(message  ===  '!commands'){
+      var cmds = commands.where(function(obj) {
+        if(!obj.hidetwitch)
+          return true;
+        return false;
+      });
+      msg = ''
+      for(i=0;i<cmds.length;i++){
+        msg += cmds[i].command
+        if(i != cmds.length -1){
+          msg += ', '
+        }
+      }
+      client.whisper(from, msg)
+    }
+});
+
+//################################################### TWITCH GREETING ###################################################
 client.on("join", function (self, username) {
   if(users.findOne({ name:username }) == null){
     if(greet && username != "zwiebeibot"){
@@ -179,7 +235,6 @@ client.on("join", function (self, username) {
       client.say(channel, "Willkommen zurück im Zwiebelstream, " + username + "! ");
     }
   }
-  db.saveDatabase();
 });
 
 
