@@ -234,6 +234,7 @@ module.exports = {
         }
         if(users.findOne({name:username}).coins < parseInt(msg[1])){
           client.say(channel, 'Du hast zu wenig Zwiebelcoins.')
+          return;
         }else{
           users.findOne({name:username}).coins -= parseInt(msg[1])
         }
