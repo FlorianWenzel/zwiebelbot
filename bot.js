@@ -62,8 +62,7 @@ function onConnection(sock) {
     });
     db.saveDatabase()
   }
-  console.log(misc.findOne({id:'zwiebelbeetCounter'}))
-      sock.emit('increaseOnions',(misc.findOne({id:'zwiebelbeetCounter'}).value));
+    sock.emit('increaseOnions',(misc.findOne({id:'zwiebelbeetCounter'}).value));
 }
 
 //##################################################################################################################
@@ -153,10 +152,12 @@ client.on("chat", (channel, userstate, message, self) => {
     }else if(message.includes('!cancelLottery')){
       coincmds.cancelLottery(client, users, lottery, channel);
     }else if(message.includes('!asdf')){
-      console.log('.asdf')
       msg = message.split(" ");
       misc.findOne({id:'zwiebelbeetCounter'}).value += parseInt(msg[1])
       io.sockets.emit('increaseOnions', parseInt(msg[1]));
+    }else if(message == "!set0"){
+      misc.findOne({id:'zwiebelbeetCounter'}).value = 0
+      db.saveDatabase()
     }
   }
 
