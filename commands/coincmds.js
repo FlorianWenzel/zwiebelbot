@@ -226,7 +226,7 @@ module.exports = {
         lotto.participants = []
         client.say(channel, 'Gewinnspiel abgebrochen und Einsätze zurückerstattet.')
       },
-      giessen: function (client, username, misc, users, channel) {
+      giessen: function (client, username, message, misc, users, channel) {
         msg = message.split(" ");
         if(isNaN(msg[1]) || msg.length != 2 || parseInt(msg[1]) < 1){
           client.say(channel, 'Syntaxfehler :(')
