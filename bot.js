@@ -11,6 +11,61 @@ var Discord = require('discord.io')
 var tmi = require('tmi.js')
 var loki = require('lokijs')
 
+
+//################################################### DATABASE ###################################################
+var users = null;
+var commands = null;
+var lottery = null;
+var broadcasts = null;
+var misc = null
+function loadHandler() {
+    users = db.getCollection('users');
+    commands = db.getCollection('commands');
+    lottery = db.getCollection('lottery');
+    broadcasts = db.getCollection('broadcasts');
+    misc = db.getCollection('misc')
+    if (!users) {
+        users = db.addCollection('users');
+    }
+    if (!commands) {
+      commands = db.addCollection('commands');
+    }
+    if (!lottery) {
+      lottery = db.addCollection('lottery');
+    }
+    if (!broadcasts) {
+      broadcasts = db.addCollection('broadcasts');
+    }
+    if(!misc) {
+      misc = db.addCollection('misc');
+    }
+}
+
+//###################################################################################################################
+//################################################### ZWIEBELBEET ###################################################
+//###################################################################################################################
+
+var app = express();
+var server = http.createServer(app);
+var io = socketio(server);
+
+io.on('connection', onConnection);
+
+app.use(express.static(__dirname + '/client'));
+server.listen(8080, () => console.log('Zwiebelbeet listening on port 8080!'));
+
+function onConnection(sock) {
+  if(!misc.findOne({id:'zwiebelbeetCounter'})){
+    misc.insert({
+      id: 'zwiebelbeetCounter',
+      value: 0
+    });
+    db.saveDatabase()
+  }
+  console.log(misc.findOne({id:'zwiebelbeetCounter'}))
+      sock.emit('increaseOnions',(misc.findOne({id:'zwiebelbeetCounter'}).value));
+}
+
 //##################################################################################################################
 //################################################### TWITCH BOT ###################################################
 //##################################################################################################################
@@ -39,28 +94,6 @@ var db = new loki('./database.db',
         autosave: true,
         autosaveInterval: 1000
       });
-var users = null;
-var commands = null;
-var lottery = null;
-var broadcasts = null;
-function loadHandler() {
-    users = db.getCollection('users');
-    commands = db.getCollection('commands');
-    lottery = db.getCollection('lottery');
-    broadcasts = db.getCollection('broadcasts');
-    if (!users) {
-        users = db.addCollection('users');
-    }
-    if (!commands) {
-      commands = db.addCollection('commands');
-    }
-    if (!lottery) {
-      lottery = db.addCollection('lottery');
-    }
-    if (!broadcasts) {
-      broadcasts = db.addCollection('broadcasts');
-    }
-}
 var timer = 0
 setInterval(interval, (1000))
 function interval() {
@@ -119,6 +152,11 @@ client.on("chat", (channel, userstate, message, self) => {
       coincmds.endLottery(client, lottery, channel);
     }else if(message.includes('!cancelLottery')){
       coincmds.cancelLottery(client, users, lottery, channel);
+    }else if(message.includes('!asdf')){
+      console.log('.asdf')
+      msg = message.split(" ");
+      misc.findOne({id:'zwiebelbeetCounter'}).value += parseInt(msg[1])
+      io.sockets.emit('increaseOnions', parseInt(msg[1]));
     }
   }
 
@@ -318,22 +356,3 @@ bot.on('message', function(user, userID, channelID, message, event) {
   }
   db.saveDatabase();
 });
-
-//###################################################################################################################
-//################################################### ZWIEBELBEET ###################################################
-//###################################################################################################################
-
-let app = express();
-let server = http.createServer(app);
-let io = socketio(server);
-
-let waitingPlayer;
-
-io.on('connection', onConnection);
-
-app.use(express.static(__dirname + '/client'));
-server.listen(8080, () => console.log('Zwiebelbeet listening on port 8080!'));
-
-function onConnection(sock) {
-      sock.emit('increaseOnions', 10);
-}

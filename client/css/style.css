@@ -2,6 +2,13 @@
   height: 300px;
       margin: 20px;
 }
+.wrapper{
+  text-align: center;
+}
+#count{
+  color: black;
+  font-size: 32px;
+}
 .spinit {
     -webkit-animation-name: spin;
     -webkit-animation-duration: 5090ms;
