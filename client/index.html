@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>RPS Online</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <img id="onion" src="./img/onion.png">
+            <span id="count">0</span>
+            </div>
+        </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="js/client.js"></script>
+        <link rel="stylesheet" href="./css/style.css"></style>
+    </body>
+</html>
+<script>
+function spinit(amount){
+  $('#count').html(parseInt($('#count').html()) + amount)
+  $('#onion').addClass('spinit')
+  $("#onion")
+  .on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
+   function(e){
+      $('#onion').removeClass('spinit')
+   });
+}
+</script>

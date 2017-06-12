@@ -1,10 +1,13 @@
-var admincmds = require('./commands/admincmds.js');
-var coincmds = require('./commands/coincmds.js');
+var admincmds = require('./commands/admincmds.js')
+var coincmds = require('./commands/coincmds.js')
 var casino = require('./commands/gamble.js')
 var broadcast = require('./commands/broadcasts.js')
-var account = require('./account.js');
+var account = require('./account.js')
 
-var Discord = require('discord.io');
+var http = require('http')
+var express = require('express')
+var socketio = require('socket.io')
+var Discord = require('discord.io')
 var tmi = require('tmi.js')
 var loki = require('lokijs')
 
@@ -315,3 +318,22 @@ bot.on('message', function(user, userID, channelID, message, event) {
   }
   db.saveDatabase();
 });
+
+//###################################################################################################################
+//################################################### ZWIEBELBEET ###################################################
+//###################################################################################################################
+
+let app = express();
+let server = http.createServer(app);
+let io = socketio(server);
+
+let waitingPlayer;
+
+io.on('connection', onConnection);
+
+app.use(express.static(__dirname + '/client'));
+server.listen(8080, () => console.log('Zwiebelbeet listening on port 8080!'));
+
+function onConnection(sock) {
+      sock.emit('increaseOnions', 10);
+}
