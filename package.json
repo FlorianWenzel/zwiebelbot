@@ -1,5 +1,5 @@
 {
-  "name": "ZwiebelBot",
+  "name": "zwiebelbot",
   "version": "1.0.0",
   "description": "Bot for twitch.tv/pokerzwiebel",
   "main": "bot.js",
@@ -11,13 +11,22 @@
   "author": "Xéntis",
   "license": "ISC",
   "dependencies": {
-    "tmi.js": "^1.1.2"
+    "discord.io": "^2.5.1",
+    "express": "^4.15.3",
+    "http": "0.0.0",
+    "lokijs": "^1.4.3",
+    "socket.io": "^2.0.2",
+    "tmi.js": "^1.2.1"
   },
-  "repository" :
-  { "type" : "git"
-  , "url" : "https://github.com/FlorianWenzel/zwiebelbot.git"
-},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlorianWenzel/zwiebelbot.git"
+  },
   "devDependencies": {
     "nodemon": "^1.11.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/FlorianWenzel/zwiebelbot/issues"
+  },
+  "homepage": "https://github.com/FlorianWenzel/zwiebelbot#readme"
 }
