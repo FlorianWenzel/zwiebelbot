@@ -151,10 +151,8 @@ client.on("chat", (channel, userstate, message, self) => {
       coincmds.endLottery(client, lottery, channel);
     }else if(message.includes('!cancelLottery')){
       coincmds.cancelLottery(client, users, lottery, channel);
-    }else if(message.includes('!asdf')){
-      msg = message.split(" ");
-      misc.findOne({id:'zwiebelbeetCounter'}).value += parseInt(msg[1])
-      io.sockets.emit('increaseOnions', parseInt(msg[1]));
+    }else if(message.includes('!gießen') || message.includes('!giessen') || message.includes('!giesen')){
+      coincmds.giessen(client, userstate.username, misc, users, , channel)
     }else if(message == "!set0"){
       misc.findOne({id:'zwiebelbeetCounter'}).value = 0
       db.saveDatabase()

@@ -6,8 +6,8 @@
   text-align: center;
 }
 #count{
-  color: black;
-  font-size: 32px;
+  color: white;
+  font-size: 64px;
 }
 .spinit {
     -webkit-animation-name: spin;

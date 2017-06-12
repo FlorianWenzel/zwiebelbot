@@ -225,5 +225,21 @@ module.exports = {
         }
         lotto.participants = []
         client.say(channel, 'Gewinnspiel abgebrochen und Einsätze zurückerstattet.')
-      }
+      },
+      giessen: function (client, username, misc, users, channel) {
+        msg = message.split(" ");
+        if(isNaN(msg[1]) || msg.length != 2 || parseInt(msg[1]) < 1){
+          client.say(channel, 'Syntaxfehler :(')
+          return;
+        }
+        if(users.findOne({name:username}).coins < parseInt(msg[1])){
+          client.say(channel, 'Du hast zu wenig Zwiebelcoins.')
+        }else{
+          users.findOne({name:username}).coins -= parseInt(msg[1])
+        }
+        client.say(channel, username + ' hat ' + msg[1] + " Zwiebeln gegossen")
+        misc.findOne({id:'zwiebelbeetCounter'}).value += parseInt(msg[1])
+        io.sockets.emit('increaseOnions', parseInt(msg[1]));
+        }
+
   };
