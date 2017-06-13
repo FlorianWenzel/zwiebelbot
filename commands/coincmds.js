@@ -240,7 +240,7 @@ module.exports = {
         }
         client.say(channel, username + ' hat ' + msg[1] + " Zwiebeln gegossen")
         misc.findOne({id:'zwiebelbeetCounter'}).value += parseInt(msg[1])
-        io.sockets.emit('increaseOnions', parseInt(msg[1]));
+        io.sockets.emit('increaseOnions', parseInt(msg[1]), username);
         }
 
   };

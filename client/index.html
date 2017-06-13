@@ -8,7 +8,9 @@
     <body>
         <div class="wrapper">
             <img id="onion" src="./img/onion.png"><br>
-            <span id="count">0</span>
+            <img id="rain" class="hide" src="./img/rain.gif"><br>
+            <span id="count">0</span><br>
+            <span id="username"></span>
             </div>
         </div>
 
@@ -18,13 +20,25 @@
     </body>
 </html>
 <script>
-function spinit(amount){
+function spinit(amount, username){
   $('#count').html(parseInt($('#count').html()) + amount)
+  $('#username').html(username + ' hat ' + amount + ' Zwiebeln gegossen!')
+  $('#username').addClass('fadeinout')
+  $('#rain').addClass('fadeinout')
+  $('#rain').removeClass('hide')
   $('#onion').addClass('spinit')
   $("#onion")
   .on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
    function(e){
       $('#onion').removeClass('spinit')
    });
+   $('#username')
+   .on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
+    function(e){
+      $('#username').removeClass('fadeinout')
+      $('#rain').removeClass('fadeinout')
+      $('#rain').addClass('hide')
+      $('#username').html(' ')
+    });
 }
 </script>

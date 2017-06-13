@@ -1,44 +1,46 @@
 #onion{
   height: 300px;
-      margin: 20px;
+  margin: 20px;
+  left: 25%;
 }
 .wrapper{
   text-align: center;
 }
 #count{
-  color: white;
+  color: black;
   font-size: 64px;
 }
+#username{
+  color: black;
+  font-size: 46px;
+}
+#rain{
+  height: 300px;
+  margin: 20px;
+  position: absolute;
+  top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+}
+.show{
+  display: block;
+}
+.hide{
+  display: none;
+}
+.fadeinout{
+  animation-name: afadeinout;
+  animation-duration: 5000ms;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+}
 .spinit {
-    -webkit-animation-name: spin;
-    -webkit-animation-duration: 5090ms;
-    -webkit-animation-iteration-count: 1;
-    -webkit-animation-timing-function: linear;
-    -moz-animation-name: spin;
-    -moz-animation-duration: 500ms;
-    -moz-animation-iteration-count: 1;
-    -moz-animation-timing-function: linear;
-    -ms-animation-name: spin;
-    -ms-animation-duration: 500ms;
-    -ms-animation-iteration-count: 1;
-    -ms-animation-timing-function: linear;
-
     animation-name: spin;
     animation-duration: 500ms;
-    animation-iteration-count: 3;
+    animation-iteration-count: 5;
     animation-timing-function: linear;
-}
-@-ms-keyframes spin {
-    from { -ms-transform: rotate(0deg); }
-    to { -ms-transform: rotate(360deg); }
-}
-@-moz-keyframes spin {
-    from { -moz-transform: rotate(0deg); }
-    to { -moz-transform: rotate(360deg); }
-}
-@-webkit-keyframes spin {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(360deg); }
 }
 @keyframes spin {
     from {
@@ -46,5 +48,19 @@
     }
     to {
         transform:rotate(360deg);
+    }
+}
+@keyframes afadeinout {
+    0% {
+         opacity: 0;
+    }
+    30% {
+        opacity: 1;
+    }
+    60% {
+        opacity: 1;
+    }
+    100% {
+       opacity: 0;
     }
 }
