@@ -286,7 +286,7 @@ var bot = new Discord.Client({
     token: account.token,
     autorun: true
 });
-
+bot.connect();
 bot.on('ready', function() {
     console.log('*****DISCORDBOT ONLINE*****');
 });
@@ -323,6 +323,9 @@ bot.on('message', function(user, userID, channelID, message, event) {
       broadcast.pausebrd('discord', bot, broadcasts, channelID, message);
     }else if(message.toLowerCase().includes('unpausebrd')){
       broadcast.unpausebrd('discord', bot, broadcasts, channelID, message);
+      //KILLME
+    }else if(message.toLowerCase().includes('!killme')){
+      process.exit(1);
     }
   }
 
@@ -335,6 +338,9 @@ bot.on('message', function(user, userID, channelID, message, event) {
   //GET ID
   if(message === '!getID'){
     bot.sendMessage( {to:channelID, message: userID})
+  }
+  if(message === '!getChannelID'){
+    bot.sendMessage( {to:channelID, message: channelID})
   }
 
   //LIST COMMANDS
