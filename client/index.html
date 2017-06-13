@@ -10,6 +10,7 @@
             <img id="onion" src="./img/onion.png"><br>
             <img id="rain" class="hide" src="./img/rain.gif"><br>
             <span id="count">0</span><br>
+            <div id="balkenbg"><div id="balken"</div></div><br><br>
             <span id="username"></span>
             </div>
         </div>
@@ -20,8 +21,12 @@
     </body>
 </html>
 <script>
-function spinit(amount, username){
-  $('#count').html(parseInt($('#count').html()) + amount)
+function spinit(all, amount, username){
+  if(all > 10000){
+    all = 10000
+  }
+  $('#balken').width(all/100*4);
+  $('#count').html(all)
   $('#username').html(username + ' hat ' + amount + ' Zwiebeln gegossen!')
   $('#username').addClass('fadeinout')
   $('#rain').addClass('fadeinout')

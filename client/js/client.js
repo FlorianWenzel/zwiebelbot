@@ -2,6 +2,6 @@ var sock = io();
 
 sock.on('increaseOnions', onIncrease);
 
-function onIncrease(amount, username) {
-    spinit(amount, username);
+function onIncrease(all, amount, username) {
+    spinit(all, amount, username);
 }

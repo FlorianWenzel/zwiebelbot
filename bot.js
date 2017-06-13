@@ -62,7 +62,7 @@ function onConnection(sock) {
     });
     db.saveDatabase()
   }
-    sock.emit('increaseOnions',(misc.findOne({id:'zwiebelbeetCounter'}).value), 'Eine höhere Macht');
+    sock.emit('increaseOnions',(misc.findOne({id:'zwiebelbeetCounter'}).value), (misc.findOne({id:'zwiebelbeetCounter'}).value), 'Eine höhere Macht');
 }
 
 //##################################################################################################################
@@ -286,7 +286,6 @@ var bot = new Discord.Client({
     token: account.token,
     autorun: true
 });
-bot.connect();
 bot.on('ready', function() {
     console.log('*****DISCORDBOT ONLINE*****');
 });
