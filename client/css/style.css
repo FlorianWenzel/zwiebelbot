@@ -7,6 +7,7 @@
   text-align: center;
 }
 #balkenbg{
+  background-image: url('./../img/holz.jpg');
   border-style: solid;
   border-radius: 5px;
   border-width: 0;
