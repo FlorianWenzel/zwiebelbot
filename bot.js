@@ -62,7 +62,7 @@ function onConnection(sock) {
     });
     db.saveDatabase()
   }
-    sock.emit('increaseOnions',(misc.findOne({id:'zwiebelbeetCounter'}).value), (misc.findOne({id:'zwiebelbeetCounter'}).value), 'Eine höhere Macht');
+    sock.emit('increaseOnions',(misc.findOne({id:'zwiebelbeetCounter'}).value % 10000), (misc.findOne({id:'zwiebelbeetCounter'}).value), 'Eine höhere Macht');
 }
 
 //##################################################################################################################

@@ -226,7 +226,7 @@ module.exports = {
         lotto.participants = []
         client.say(channel, 'Gewinnspiel abgebrochen und Einsätze zurückerstattet.')
       },
-      giessen: function (client, io, username, message, misc, users, channel) {
+    giessen: function (client, io, username, message, misc, users, channel) {
         msg = message.split(" ");
         if(isNaN(msg[1]) || msg.length != 2 || parseInt(msg[1]) < 1){
           client.say(channel, 'Syntaxfehler :(')
@@ -238,8 +238,8 @@ module.exports = {
         }else{
           users.findOne({name:username}).coins -= parseInt(msg[1])
         }
-        client.say(channel, username + ' hat ' + msg[1] + " Zwiebeln gegossen")
         misc.findOne({id:'zwiebelbeetCounter'}).value += parseInt(msg[1])
+        client.say(channel, username + ' hat ' + msg[1] + " Zwiebeln gegossen (jetzt:" +misc.findOne({id:'zwiebelbeetCounter'}).value % 10000  + '/10000)')
         io.sockets.emit('increaseOnions', (misc.findOne({id:'zwiebelbeetCounter'}).value % 10000), parseInt(msg[1]), username);
         }
 
