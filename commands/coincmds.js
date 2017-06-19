@@ -34,7 +34,7 @@ module.exports = {
         url: 'https://api.twitch.tv/kraken/streams/'+channel+'?client_id=' + twitchID,
         json: true
     }, function (error, response, body) {
-      if(body.stream != null){
+      if(!error && body.stream != null){
         request({
             url: "https://tmi.twitch.tv/group/user/"+channel+"/chatters",
             json: true
