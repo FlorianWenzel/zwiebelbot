@@ -2,6 +2,7 @@ var admincmds = require('./commands/admincmds.js')
 var coincmds = require('./commands/coincmds.js')
 var casino = require('./commands/gamble.js')
 var broadcast = require('./commands/broadcasts.js')
+var statistics = require('./commands/statistics.js')
 var account = require('./account.js')
 
 var http = require('http')
@@ -325,6 +326,9 @@ bot.on('message', function(user, userID, channelID, message, event) {
       //KILLME
     }else if(message.toLowerCase().includes('!killme')){
       process.exit(1);
+    }else if(message.toLowerCase() == '!stats'){
+      console.log('jo')
+      statistics.listusers('discord', bot, users, channelID)
     }
   }
 
