@@ -155,6 +155,9 @@ client.on("chat", (channel, userstate, message, self) => {
     }else if(message == "!set0"){
       misc.findOne({id:'zwiebelbeetCounter'}).value = 0
       db.saveDatabase()
+    }else if(message.includes('!caster')){
+      msg = message.split(' ')
+      client.say(channel, 'Lasst ' + msg[1] + ' auch ein Zwiebelfollow da! Super Streamer! <Name> und die Zwiebel danken Dir! https://twitch.tv/' + msg[1])
     }
   }
   if(message.includes('!gießen') || message.includes('!giessen') || message.includes('!giesen')){
