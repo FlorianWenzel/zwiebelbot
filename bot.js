@@ -157,7 +157,7 @@ client.on("chat", (channel, userstate, message, self) => {
       db.saveDatabase()
     }else if(message.includes('!caster')){
       msg = message.split(' ')
-      client.say(channel, 'Lasst ' + msg[1] + ' auch ein Zwiebelfollow da! Super Streamer! <Name> und die Zwiebel danken Dir! https://twitch.tv/' + msg[1])
+      client.say(channel, 'Lasst ' + msg[1] + ' auch ein Zwiebelfollow da! Super Streamer! ' + msg[1] +' und die Zwiebel danken Dir! https://twitch.tv/' + msg[1])
     }
   }
   if(message.includes('!gießen') || message.includes('!giessen') || message.includes('!giesen')){
