@@ -338,7 +338,7 @@ bot.on('message', function(user, userID, channelID, message, event) {
           msg = message.split(' ')
           if(msg.length != 2)
             return;
-          bot.sendMessage({ to:channelID, message:'Lasst ' + msg[1] + ' auch ein Zwiebelfollow da! Super Streamer! ' + msg[1] +' und die Zwiebel danken Dir! https://twitch.tv/' + msg[1])
+          bot.sendMessage({ to:channelID, message:'Lasst ' + msg[1] + ' auch ein Zwiebelfollow da! Super Streamer! ' + msg[1] +' und die Zwiebel danken Dir! https://twitch.tv/' + msg[1]})
         }
   }
 
