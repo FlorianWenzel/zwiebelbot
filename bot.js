@@ -157,6 +157,8 @@ client.on("chat", (channel, userstate, message, self) => {
       db.saveDatabase()
     }else if(message.includes('!caster')){
       msg = message.split(' ')
+      if(msg.length != 2)
+        return;
       client.say(channel, 'Lasst ' + msg[1] + ' auch ein Zwiebelfollow da! Super Streamer! ' + msg[1] +' und die Zwiebel danken Dir! https://twitch.tv/' + msg[1])
     }
   }
@@ -332,7 +334,12 @@ bot.on('message', function(user, userID, channelID, message, event) {
     }else if(message.toLowerCase() == '!stats'){
       console.log('jo')
       statistics.listusers('discord', bot, users, channelID)
-    }
+    }else if(message.includes('!caster')){
+          msg = message.split(' ')
+          if(msg.length != 2)
+            return;
+          bot.sendMessage({ to:channelID, message:'Lasst ' + msg[1] + ' auch ein Zwiebelfollow da! Super Streamer! ' + msg[1] +' und die Zwiebel danken Dir! https://twitch.tv/' + msg[1])
+        }
   }
 
   //CUSTOM COMMANDS
