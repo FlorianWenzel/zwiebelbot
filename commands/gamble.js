@@ -73,5 +73,66 @@ module.exports = {
         }
       }
     }
+  },
+  slots: function slots(client, misc, users, channel, userstate, message) {
+    jackpot = misc.findOne({ id:'jackpot' })
+    if(!(misc.findOne(jackpot))){
+      misc.insert({
+        id: 'jackpot',
+        pot: 10000
+      });
+      jackpot = misc.findOne({ id:'jackpot' })
+    }
+    parts = message.split(' ')
+    user = users.findOne({name:userstate.username})
+    if(parts.length != 2 || isNaN(parts[1]) || parts[1] < 1){
+      client.say(channel, 'Benutz !slots <einsatz>')
+      return;
+    }
+    if(user.coins < parts[1]){
+      client.say(channel, 'Zu wenig Meth, sorry :(')
+      return;
+    }
+    slotSymbols = [
+      'MorphinTime',
+      'TwitchLit',
+      'TwitchRPG'
+    ]
+
+    user.coins -= parts[1];
+    results = [];
+    for(i=0;i<4;i++){
+      random = Math.floor(Math.random() * 25) + 1
+      if(random < 15){
+        results[i] = slotSymbols[0]
+      }else if (random < 23){
+        results[i] = slotSymbols[1]
+      }else{
+        results[i] = slotSymbols[2]
+      }
+    }
+    client.say(channel, '=[ ' + results[0] + ' ][ ' + results[1] +' ][ ' + results[2] + ' ][ ' + results[3] + ' ]=')
+    var i = setInterval(showresult, 1000)
+    function showresult() {
+      if(results[0] == results[1] && results[1] == results[2] && results[2] == results[3]){
+        multiplier = 2;
+        switch (results[0]) {
+          case 'MorphinTime':
+            multiplier = 5;
+            break;
+          case 'TwitchLit':
+            multiplier = 50;
+            break;
+          case 'TwitchRPG':
+            multiplier = 1000;
+            break;
+        }
+        client.say(channel, userstate.username + ' gewinnt ' + multiplier + 'x!')
+        user.coins += parseInt(parts[1]) * (multiplier+1);
+      }else{
+      }
+      clearInterval(i)
+    }
+
   }
 };

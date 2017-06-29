@@ -185,11 +185,13 @@ client.on("chat", (channel, userstate, message, self) => {
 
   //COINS FUNCTIONS
   //VIEW COINS
-  if(message.includes("!coins") || message.includes("!chips")){
+  if(message.includes("!coins") || message.includes("!chips") || message.includes("!c ")){
     coincmds.viewCoins(client, users, channel, userstate);
   //GAMBLE
   }else if(message.includes("!gamble")){
     casino.gamble(client, users, channel, userstate, message);
+  }else if(message.includes('!slots ') || message.includes('!slot ') || message.includes('!s ')){
+    casino.slots(client, misc, users, channel, userstate, message);
   //SEND COINS
   }else if(message.includes('!send')){
     coincmds.send(client, users, channel, userstate, message);
@@ -332,7 +334,6 @@ bot.on('message', function(user, userID, channelID, message, event) {
     }else if(message.toLowerCase().includes('!killme')){
       process.exit(1);
     }else if(message.toLowerCase() == '!stats'){
-      console.log('jo')
       statistics.listusers('discord', bot, users, channelID)
     }else if(message.includes('!caster')){
           msg = message.split(' ')
