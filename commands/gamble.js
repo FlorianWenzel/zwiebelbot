@@ -111,7 +111,7 @@ module.exports = {
         results[i] = slotSymbols[2]
       }
     }
-    resultMessage =  '=[ ' + results[0] + ' ][ ' + results[1] +' ][ ' + results[2] + ' ][ ' + results[3] + ' ]= ')
+    resultMessage =  '=[ ' + results[0] + ' ][ ' + results[1] +' ][ ' + results[2] + ' ][ ' + results[3] + ' ]= '
     if(results[0] == results[1] && results[1] == results[2] && results[2] == results[3]){
       multiplier = 2;
       switch (results[0]) {
