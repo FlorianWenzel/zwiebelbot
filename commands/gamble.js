@@ -52,7 +52,7 @@ module.exports = {
         if(gambler.coins < parseInt(msg[1])){
           client.say(channel, 'Sorry du hast zu wenig ZwiebelCoins!')
         }else{
-          if(gambler.gambleCooldown == undefined || gambler.gambleCooldown + 900000 < new Date().getTime()){
+          if(gambler.gambleCooldown == undefined || gambler.gambleCooldown -10 < new Date().getTime()){
             gambler.gambleCooldown = new Date().getTime();
             playerCard = randomCard();
             dealerCard = randomCard();
@@ -90,7 +90,7 @@ module.exports = {
       return;
     }
     if(user.coins < parts[1]){
-      client.say(channel, 'Zu wenig Meth, sorry :(')
+      client.say(channel, 'Zu wenig ZwiebelCoins, sorry :(')
       return;
     }
     slotSymbols = [
