@@ -111,28 +111,23 @@ module.exports = {
         results[i] = slotSymbols[2]
       }
     }
-    client.say(channel, '=[ ' + results[0] + ' ][ ' + results[1] +' ][ ' + results[2] + ' ][ ' + results[3] + ' ]=')
-    var i = setInterval(showresult, 1000)
-    function showresult() {
-      if(results[0] == results[1] && results[1] == results[2] && results[2] == results[3]){
-        multiplier = 2;
-        switch (results[0]) {
-          case 'MorphinTime':
-            multiplier = 5;
-            break;
-          case 'TwitchLit':
-            multiplier = 50;
-            break;
-          case 'TwitchRPG':
-            multiplier = 1000;
-            break;
-        }
-        client.say(channel, userstate.username + ' gewinnt ' + multiplier + 'x!')
-        user.coins += parseInt(parts[1]) * (multiplier+1);
-      }else{
+    resultMessage =  '=[ ' + results[0] + ' ][ ' + results[1] +' ][ ' + results[2] + ' ][ ' + results[3] + ' ]= ')
+    if(results[0] == results[1] && results[1] == results[2] && results[2] == results[3]){
+      multiplier = 2;
+      switch (results[0]) {
+        case 'MorphinTime':
+          multiplier = 5;
+          break;
+        case 'TwitchLit':
+          multiplier = 50;
+          break;
+        case 'TwitchRPG':
+          multiplier = 1000;
+          break;
       }
-      clearInterval(i)
+      resultMessage += userstate.username + ' gewinnt ' + parts[1] * (multiplier+1) + ' (' + multiplier + 'x)!'
+      user.coins += parseInt(parts[1]) * (multiplier+1);
     }
-
+    client.say(channel, resultMessage);
   }
 };
