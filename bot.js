@@ -158,8 +158,6 @@ client.on("chat", (channel, userstate, message, self) => {
       db.saveDatabase()
     }else if(message.includes('!set ')){
       coincmds.setCoins(client, users, channel, userstate, message)
-    }else if(message.includes('!convert ') || message.includes('!umtauschen ')){
-      coincmds.convert(client, users, channel, userstate, message)
     }else if(message.includes('!caster')){
       msg = message.split(' ')
       if(msg.length != 2)
@@ -169,6 +167,8 @@ client.on("chat", (channel, userstate, message, self) => {
   }
   if(message.includes('!gießen') || message.includes('!giessen') || message.includes('!giesen')){
     coincmds.giessen(client, io,  userstate.username, message, misc, users, channel)
+  }else if(message.includes('!convert ') || message.includes('!umtauschen ')){
+    coincmds.convert(client, users, channel, userstate, message)
   }
 
   //LIST COMMANDS
