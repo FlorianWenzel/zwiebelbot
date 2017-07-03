@@ -96,6 +96,53 @@ module.exports = {
       }
     }
   },
+  setCoins: function (client, users, channel, userstate, message) {
+    msg = message.split(" ")
+    if(msg.length != 3 || msg[0] != "!set" || isNaN(msg[2]) || parseInt(msg[2])<=0){
+      client.say(channel, 'Benutz !set <User> <Wie viel>')
+    }else {
+      getter = users.findOne({ name:msg[1].toLowerCase()});
+      if(getter){
+        getter.coins = parseInt(msg[2]);
+        client.say(channel, msg[1] + ' hat '+msg[2]+' nun ZwiebelCoins.')
+      }else{
+          client.say(channel, 'Ich kenne keinen ' + msg[1]+ '.')
+          return;
+
+      }
+    }
+  },
+  convert: function (client, users, channel, userstate, message) {
+    msg = message.split(" ")
+    if(msg.length != 2 || isNaN(msg[1]) || msg[1] < 1){
+      client.say(channel, 'Benutze !convert <Anzahl> um Coins zu convertieren!')
+    }else if(users.findOne({ name:userstate.username}).coins < msg[1]){
+      client.say(channel, 'Sorry, zu wenig ZwiebelCoins')
+    }else{
+      console.log('#asbestbot'+'/'+ 'WANT_TO_CONVERT:' + userstate.username + ':' + msg[1])
+      client.whisper('#asbestbot', 'WANT_TO_CONVERT:' + userstate.username + ':' + msg[1])
+    }
+  },
+  receiveConvert: function (client, users, from, message) {
+    if(from != '#asbestbot')
+      return;
+    msg = message.split(":")
+    receiver = users.findOne({ name:msg[1]})
+    if(!receiver){
+      return;
+    }else{
+      receiver.coins += parseInt(msg[2])
+      client.whisper('#asbestbot', 'CONVERT_SUCCESSFULL:' + msg[1] + ':' + msg[2])
+    }
+
+  },
+  convertSuccessfull: function (client, users, from, message) {
+    if(from != '#asbestbot')
+      return;
+    msg = message.split(":")
+    client.say('pokerzwiebel', 'Convert erfolgreich!')
+    users.findOne({name:msg[1]}).coins -= parseInt(msg[2])
+  },
   startLottery: function (client, message, lottery, channel) {
     parts = message.split(" ");
     if(isNaN(parts[1]) && parts[1] != "NL"){

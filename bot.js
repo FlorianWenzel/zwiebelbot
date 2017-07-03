@@ -116,6 +116,7 @@ client.on("chat", (channel, userstate, message, self) => {
   coincmds.knowUser(users, userstate.username)
 
   //MOD FUNCTIONS
+
   if(userstate.mod){
     if (message.includes('!addcmd')){
       admincmds.addcmd('twitch', client, commands, channel, message);
@@ -155,6 +156,10 @@ client.on("chat", (channel, userstate, message, self) => {
     }else if(message == "!set0"){
       misc.findOne({id:'zwiebelbeetCounter'}).value = 0
       db.saveDatabase()
+    }else if(message.includes('!set ')){
+      coincmds.setCoins(client, users, channel, userstate, message)
+    }else if(message.includes('!convert ') || message.includes('!umtauschen ')){
+      coincmds.convert(client, users, channel, userstate, message)
     }else if(message.includes('!caster')){
       msg = message.split(' ')
       if(msg.length != 2)
@@ -214,6 +219,13 @@ var twitchmods = ['#pokerzwiebel', '#onlyamiga', '#dukexentis'];
 client.on("whisper", function (from, userstate, message, self) {
     if (self) return;
     console.log('<TWITCH WHISPER> ' + from + ': ' + message);
+    if(from == '#asbestbot'){
+      if(message.includes('WANT_TO_CONVERT')){
+        coincmds.receiveConvert(client, users, from, message)
+      }else if(message.includes('CONVERT_SUCCESSFULL')){
+        coincmds.convertSuccessfull(client, users, from, message)
+      }
+    }
     if(twitchmods.includes(from)){
       if (message.includes('!addcmd')){
         admincmds.addcmd('twitchwhisper', client, commands, from, message);
