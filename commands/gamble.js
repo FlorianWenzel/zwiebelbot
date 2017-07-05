@@ -63,7 +63,7 @@ module.exports = {
               client.say(channel, beatiCard(playerCard) + ' < ' + beatiCard(dealerCard) +' => Verloren!')
               gambler.coins -= parseInt(msg[1]);
             }else{
-              client.say(channel, beatiCard(playerCard) + ' = ' + beatiCard(dealerCard) +' => Unendschieden!')
+              client.say(channel, beatiCard(playerCard) + ' = ' + beatiCard(dealerCard) +' => Unentschieden!')
             }
             chips = gambler.coins;
             client.say(channel, userstate.username + ' hat jetzt ' + chips.toString() + ' ZwiebelCoins')
