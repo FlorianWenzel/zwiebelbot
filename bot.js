@@ -12,7 +12,6 @@ var Discord = require('discord.io')
 var tmi = require('tmi.js')
 var loki = require('lokijs')
 
-
 //################################################### DATABASE ###################################################
 var users = null;
 var commands = null;
@@ -163,6 +162,11 @@ client.on("chat", (channel, userstate, message, self) => {
       if(msg.length != 2)
         return;
       client.say(channel, 'Lasst ' + msg[1] + ' auch ein Zwiebelfollow da! Super Streamer! ' + msg[1] +' und die Zwiebel danken Dir! https://twitch.tv/' + msg[1])
+    }else if (message.includes('!bohlen')) {
+      msg = message.split(' ')
+      if(!(msg.length != 2 || isNaN(msg[1]))){
+        io.emit('bohlen', msg[1])
+      }
     }
   }
   if(message.includes('!gießen') || message.includes('!giessen') || message.includes('!giesen')){

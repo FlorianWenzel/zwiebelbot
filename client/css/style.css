@@ -3,6 +3,11 @@
   margin: 20px;
   left: 25%;
 }
+#frame {
+  left: 100000px;
+  display: none;
+  opacity: 0;
+}
 .wrapper{
   text-align: center;
 }
