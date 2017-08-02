@@ -1,3 +1,109 @@
+
+body	background: #fbffb9;
+}
+body, html{
+	height: 100%;
+}
+/* code for the sun  */
+#sun{
+	position: absolute;
+	top: 25%;
+	left: 45%;
+	margin: -150px 0 0 -150px;
+	width: 100px;
+	height: 100px;
+}
+#sun *, #sun *:before, #sun *:after{
+	position: absolute;
+}
+
+/* code for the rings */
+#rings{
+	top: 50%;
+	left: 50%;
+	z-index: 1;
+}
+#rings div:before, #rings div:after{
+	content: "";
+	z-index: 2;
+	top: 0;
+	left: 0;
+	height: inherit;
+	width: inherit;
+	background: inherit;
+}
+#rings div:before{
+	transform: rotate(60deg);
+}
+#rings div:after{
+	transform: rotate(-60deg);
+}
+#rings div:nth-child(even){
+	animation: rotateR 12s infinite linear;
+}
+#rings div:nth-child(odd){
+	animation: rotateL 12s infinite linear;
+	transform: rotate(15deg);
+}
+#rings div:nth-child(1){
+	animation-duration: 8s;
+	backgrond: rgba(255, 230, 84, 0.5);
+	width: 100px;
+	height: 100px;
+	margin: -50px 0 0 -50px;
+}
+#rings div:nth-child(2){
+	animation-duration: 9s;
+	background: rgba(255, 185, 6, 0.5);
+	width: 95px;
+	height: 95px;
+	margin: -42.5px 0 0 -42.5px;
+}
+#rings div:nth-child(3){
+	animation-duration: 5s;
+	background: rgba(255, 130, 5, 0.5);
+	width: 90px;
+	height: 90px;
+	margin: -45px 0 0 -45px;
+}
+#ringsv idiv:nth-child(4){
+	animation-duration: 3s;
+	background: rgba(255, 90, 0, 0.5);
+	width: 85px;
+	height: 170px;
+	margin: -42.5px 0 0 -42.5px;
+}
+
+/* animations */
+@keyframes rotateR{
+	from{
+		transform: rotate(0deg);
+	}
+	to{
+		transform: rotate(360deg);
+	}
+}
+@keyframes rotateL{
+	from{
+		transform: rotate(360deg);
+	}
+	to{
+		transform: rotate(0deg);
+	}
+}
+
+body{
+	background: #fbff419;
+}
+
+
+
+
+
+
+
+/*SUN FIN*/
+
 #onion{
   height: 300px;
   margin: 20px;

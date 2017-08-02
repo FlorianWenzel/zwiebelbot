@@ -173,6 +173,8 @@ client.on("chat", (channel, userstate, message, self) => {
     coincmds.giessen(client, io,  userstate.username, message, misc, users, channel)
   }else if(message.includes('!convert ') || message.includes('!umtauschen ')){
     coincmds.convert(client, users, channel, userstate, message)
+  }else if (message.includes('!sunshine')) {
+    io.emit('sunshine')
   }
 
   //LIST COMMANDS
