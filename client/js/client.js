@@ -6,8 +6,10 @@ sock.on('bohlen', function(number){
 })
 sock.on('sunshine', function(){
   document.getElementById('sun').classList.remove('hide')
-  setInterval(function () {
+  var a = setInterval(function () {
     document.getElementById('sun').classList.add('hide')
+    clearInterval(a)
+    läuft = null;
   }, 10000)
 })
 function onIncrease(all, amount, username) {
