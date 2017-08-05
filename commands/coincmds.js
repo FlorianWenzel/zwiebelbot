@@ -140,6 +140,9 @@ module.exports = {
     user.coins -= parseInt(amount);
     client.say(channel, username + ' hat ' + amount + ' ZwiebelCoins erfolgreich eingezahlt.')
   },
+  cashInUnsuccessFull: function (client, amount, users, username, channel){
+    client.say(channel, '@' + username + ' der angegebene DukePoker Name existiert nicht :( Achte auf Groß/Kleinschreibung (keine Sorge dir wurden keine ZwiebelCoins abgebucht)')
+  },
   receiveConvert: function (client, users, from, message) {
     if(from != '#asbestbot')
       return;

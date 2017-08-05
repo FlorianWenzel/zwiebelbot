@@ -73,8 +73,10 @@ function onConnection(sock) {
   }
   sock.emit('increaseOnions',(misc.findOne({id:'zwiebelbeetCounter'}).value % 10000), (misc.findOne({id:'zwiebelbeetCounter'}).value), 'Eine höhere Macht');
   sock.on('cashInSuccessFull', function (i) {
-    console.log('yo')
     coincmds.cashInSuccessFull(client, i.amount, users, i.username, channel)
+  })
+  sock.on('cashInUnsuccessFull', function (i) {
+    coincmds.cashInUnsuccessFull(client, i.amount, users, i.username, channel)
   })
 }
 
