@@ -182,7 +182,7 @@ client.on("chat", (channel, userstate, message, self) => {
   }else if (message.includes('!sunshine')) {
     io.emit('sunshine')
   }else if (message.includes('!poker')) {
-    coincmds.poker(client, pokersite, users, channel, userstate, message)
+    coincmds.casIn(client, pokersite, users, channel, userstate, message)
   }
 
   //LIST COMMANDS

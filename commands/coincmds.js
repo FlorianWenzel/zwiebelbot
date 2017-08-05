@@ -123,7 +123,7 @@ module.exports = {
       client.whisper('#asbestbot', 'WANT_TO_CONVERT:' + userstate.username + ':' + msg[1])
     }
   },
-  poker: function (client, pokersite, users, channel, userstate, message) {
+  cashIn: function (client, pokersite, users, channel, userstate, message) {
     msg = message.split(' ')
     if(msg.length != 3 || isNaN(msg[2])){
       client.say(channel, 'Syntaxfehler :/, benutz !poker <Dein DukePoker Name> <Anzahl>')
@@ -135,7 +135,7 @@ module.exports = {
     }
     pokersite.emit('cashIn', {sender:'zwiebelbot',username:msg[1], amount:parseInt(msg[2]), twitch:userstate.username});
   },
-  pokerSuccessfull: function (client, amount, users, username, channel){
+  cashInSuccessFull: function (client, amount, users, username, channel){
     user = users.findOne({name:username});
     user.chips -= parseInt(amount);
     client.say(channel, amount + ' erfolgreich eingezahlt.')
