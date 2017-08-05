@@ -8,6 +8,7 @@ var account = require('./account.js')
 var http = require('http')
 var express = require('express')
 var socketio = require('socket.io')
+var clientio = require('socket.io-client')
 var Discord = require('discord.io')
 var tmi = require('tmi.js')
 var loki = require('lokijs')
@@ -48,6 +49,7 @@ function loadHandler() {
 var app = express();
 var server = http.createServer(app);
 var io = socketio(server);
+var pokersite = clientio.connect("http://vps.xentis.me:1337");
 
 io.on('connection', onConnection);
 
@@ -62,7 +64,11 @@ function onConnection(sock) {
     });
     db.saveDatabase()
   }
-    sock.emit('increaseOnions',(misc.findOne({id:'zwiebelbeetCounter'}).value % 10000), (misc.findOne({id:'zwiebelbeetCounter'}).value), 'Eine höhere Macht');
+  sock.emit('increaseOnions',(misc.findOne({id:'zwiebelbeetCounter'}).value % 10000), (misc.findOne({id:'zwiebelbeetCounter'}).value), 'Eine höhere Macht');
+  sock.on('cashInSuccessFull', function (i) {
+    console.log('yo')
+    coincmds.cashInSuccessFull(client, i.amount, users, i.username, channel)
+  })
 }
 
 //##################################################################################################################
@@ -175,6 +181,8 @@ client.on("chat", (channel, userstate, message, self) => {
     coincmds.convert(client, users, channel, userstate, message)
   }else if (message.includes('!sunshine')) {
     io.emit('sunshine')
+  }else if (message.includes('!poker')) {
+    coincmds.poker(client, pokersite, users, channel, userstate, message)
   }
 
   //LIST COMMANDS
