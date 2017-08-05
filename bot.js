@@ -19,6 +19,13 @@ var commands = null;
 var lottery = null;
 var broadcasts = null;
 var misc = null
+var db = new loki('./database.db',
+      {
+        autoload: true,
+        autoloadCallback : loadHandler,
+        autosave: true,
+        autosaveInterval: 1000
+      });
 function loadHandler() {
     users = db.getCollection('users');
     commands = db.getCollection('commands');
@@ -92,13 +99,6 @@ var options = {
 }
 
 var client = new tmi.client(options);
-var db = new loki('./database.db',
-      {
-        autoload: true,
-        autoloadCallback : loadHandler,
-        autosave: true,
-        autosaveInterval: 1000
-      });
 var timer = 0
 setInterval(interval, (1000))
 function interval() {

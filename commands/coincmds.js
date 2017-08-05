@@ -138,7 +138,7 @@ module.exports = {
   cashInSuccessFull: function (client, amount, users, username, channel){
     user = users.findOne({name:username});
     user.chips -= parseInt(amount);
-    client.say(channel, amount + ' erfolgreich eingezahlt.')
+    client.say(channel, username + ' hat ' + amount + ' ZwiebelCoins erfolgreich eingezahlt.')
   },
   receiveConvert: function (client, users, from, message) {
     if(from != '#asbestbot')
