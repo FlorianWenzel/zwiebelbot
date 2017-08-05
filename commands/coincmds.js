@@ -129,7 +129,7 @@ module.exports = {
       client.say(channel, 'Syntaxfehler :/, benutz !poker <Dein DukePoker Name> <Anzahl>')
       return;
     }
-    if(users.findOne({name:userstate.username}).chips < parseInt(msg[2])){
+    if(users.findOne({name:userstate.username}).coins < parseInt(msg[2])){
       client.say(channel, 'Zu wenig ZwiebelCoins')
       return;
     }
@@ -137,7 +137,7 @@ module.exports = {
   },
   cashInSuccessFull: function (client, amount, users, username, channel){
     user = users.findOne({name:username});
-    user.chips -= parseInt(amount);
+    user.coins -= parseInt(amount);
     client.say(channel, username + ' hat ' + amount + ' ZwiebelCoins erfolgreich eingezahlt.')
   },
   receiveConvert: function (client, users, from, message) {
