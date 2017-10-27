@@ -123,8 +123,9 @@ client.on("chat", (channel, userstate, message, self) => {
   coincmds.knowUser(users, userstate.username)
 
   //MOD FUNCTIONS
+  console.log(userstate)
 
-  if(userstate.mod){
+  if(userstate.mod || userstate.username == 'pokerzwiebel'){
     if (message.includes('!addcmd')){
       admincmds.addcmd('twitch', client, commands, channel, message);
       return;
