@@ -123,8 +123,6 @@ client.on("chat", (channel, userstate, message, self) => {
   coincmds.knowUser(users, userstate.username)
 
   //MOD FUNCTIONS
-  console.log(userstate)
-
   if(userstate.mod || userstate.username == 'pokerzwiebel'){
     if (message.includes('!addcmd')){
       admincmds.addcmd('twitch', client, commands, channel, message);
@@ -228,6 +226,10 @@ client.on("chat", (channel, userstate, message, self) => {
   msg = message.split(" ")
   if(msg.length == 1 && commands.findOne({ command:msg[0].toLowerCase()})){
     client.say(channel, commands.findOne({ command:msg[0].toLowerCase()}).response)
+  }
+
+  if(message.includes('!!!') || message.includes('???') || message.includes('?!?') || message.includes('!?!')){
+    client.say(channel, '@'+userstate.username+' Satzzeichen sind keine Rudeltiere ;)');
   }
 });
 
